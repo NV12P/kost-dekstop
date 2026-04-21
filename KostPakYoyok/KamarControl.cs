@@ -245,18 +245,19 @@ namespace KostPakYoyok
             y = lblNamaKamar.Bottom + 10;
 
             // ================= STATUS =================
-            var statusVal = (string)item["status_kamar"];
+            var statusVal = item["status_kamar"]?.ToString().ToLower() ?? "tersedia";
+            var isDisewa = statusVal == "disewa" || statusVal == "terisi";
 
             var lblStatus = new Label
             {
                 Location = new Point(padding, y),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
-                ForeColor = statusVal == "terisi" ? Color.OrangeRed : Color.LimeGreen,
-                Text = statusVal == "terisi" ? "Status - Terisi" : "Status - Tersedia"
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                ForeColor = isDisewa ? Color.Red : Color.LimeGreen,
+                Text = isDisewa ? "Status - Disewa" : "Status - Tersedia"
             };
-
             panel.Controls.Add(lblStatus);
+            y = lblStatus.Bottom + 12;
             y = lblStatus.Bottom + 12;
 
             // ================= FASILITAS =================
@@ -352,7 +353,12 @@ namespace KostPakYoyok
             y = lblHargaTitle.Bottom + 5;
 
             var hargaVal = item["harga_kamar_perbulan"];
-            string hargaText = hargaVal != null ? hargaVal.ToString() : "0";
+            string hargaText = "0";
+            if (hargaVal != null && long.TryParse(hargaVal.ToString(), out long hrg))
+            {
+                // Format ribuan pake titik mang
+                hargaText = string.Format("{0:N0}", hrg).Replace(",", ".");
+            }
 
             var lblHarga = new Label
             {
@@ -372,7 +378,7 @@ namespace KostPakYoyok
                 Location = new Point(padding, panel.Height - 55),
                 Text = "Edit",
                 BorderRadius = 12,
-                FillColor = Color.Gray,
+                FillColor = Color.FromArgb(26, 18, 101),
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold)
             };

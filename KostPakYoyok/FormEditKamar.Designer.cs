@@ -175,8 +175,9 @@
             this.textHarga.PlaceholderText = "Rp.";
             this.textHarga.SelectedText = "";
             this.textHarga.Size = new System.Drawing.Size(515, 53);
-            this.textHarga.TabIndex = 26;
+            this.textHarga.TabIndex = 15;
             this.textHarga.TextOffset = new System.Drawing.Point(6, -1);
+            this.textHarga.TextChanged += new System.EventHandler(this.textHarga_TextChanged);
             this.textHarga.TextChanged += new System.EventHandler(this.textHarga_TextChanged);
             // 
             // btnSimpan

@@ -166,6 +166,7 @@ namespace KostPakYoyok
             this.textNominal.Size = new System.Drawing.Size(484, 57);
             this.textNominal.TabIndex = 27;
             this.textNominal.TextOffset = new System.Drawing.Point(6, -1);
+            this.textNominal.TextChanged += new System.EventHandler(this.textNominal_TextChanged);
             // 
             // btnTambah
             // 

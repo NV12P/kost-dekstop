@@ -109,6 +109,8 @@ namespace KostPakYoyok
         private Panel CreateRoomRow(JToken item, int y)
         {
             string status = item["status"]?.ToString().ToLower() ?? "tersedia";
+            // Ambil nomor kamar mang
+            string namaKamar = item["nomor_kamar"]?.ToString() ?? item["nomor"]?.ToString() ?? item["nama"]?.ToString() ?? "Kamar";
 
             Panel p = new Panel()
             {
@@ -118,7 +120,7 @@ namespace KostPakYoyok
 
             p.Controls.Add(new Label()
             {
-                Text = item["nama"]?.ToString(),
+                Text = namaKamar,
                 Font = new Font("Segoe UI Semibold", 11, FontStyle.Bold),
                 ForeColor = Color.FromArgb(26, 18, 101),
                 Location = new Point(15, 12),
@@ -151,7 +153,10 @@ namespace KostPakYoyok
             {
                 btn.Text = "Informasi";
                 btn.FillColor = Color.FromArgb(26, 18, 101);
-                btn.Click += (s, e) => ShowPenyewaDetails(item);
+
+                string kamarFix = namaKamar;
+
+                btn.Click += (s, e) => ShowPenyewaDetails(item, kamarFix);
             }
 
             p.Controls.Add(btn);
@@ -161,18 +166,17 @@ namespace KostPakYoyok
         // =====================================================
         // DETAIL PENYEWA
         // =====================================================
-        private void ShowPenyewaDetails(JToken roomItem)
+        private void ShowPenyewaDetails(JToken roomItem, string nomorKamar)
         {
             selectedRoomItem = roomItem;
 
             var penyewa = roomItem["penyewa"];
             if (penyewa == null) return;
 
-            selectedRoomPrice = roomItem["harga"]?.ToObject<long>() ?? 0;
+            selectedRoomPrice = roomItem["harga_kamar_perbulan"]?.ToObject<long>() ?? roomItem["harga"]?.ToObject<long>() ?? 0;
 
-            string noKamar = roomItem["nama"]?.ToString() ?? "-";
-
-            noKamar = noKamar.Replace("Kamar", "").Trim();
+            // Ambil ID kamar mang sesuai request
+            string noKamar = roomItem["id"]?.ToString() ?? roomItem["id_kamar"]?.ToString() ?? "-";
 
             label21.Text = "Informasi Data Kamar - " + noKamar;
 
@@ -197,7 +201,7 @@ namespace KostPakYoyok
                 // Jika transfer atau field kosong, tetap munculkan tombol biar aman
                 btnBukti.Visible = true;
                 // Balikin ke lebar standar biar gak tabrakan sama tombol mang
-                textTotalCicilan.Width = 224; 
+                textTotalCicilan.Width = 240; 
             }
 
             // total cicilan dari API (Sesuai dokumentasi 4.1 fieldnya adalah 'nominal')
@@ -213,7 +217,7 @@ namespace KostPakYoyok
 
             // RESET STATUS UPLOAD FOTO BIAR GAK NYASAR KE PENYEWA LAIN
             selectedBuktiPath = "";
-            btnBukti.FillColor = Color.FromArgb(241, 241, 241); // #f1f1f1 biar aestetik mang
+            btnBukti.FillColor = Color.FromArgb(183, 188, 196); // biar aestetik mang
             btnBukti.ForeColor = Color.FromArgb(26, 18, 101);   // Teks biru tua biar kontras
             btnBukti.Text = ""; // Kosongkan teks agar tidak menutupi logo mang
 
@@ -511,4 +515,4 @@ namespace KostPakYoyok
 
         }
     }
-}
+   }

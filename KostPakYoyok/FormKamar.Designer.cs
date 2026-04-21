@@ -211,6 +211,7 @@
             this.textHarga.Size = new System.Drawing.Size(515, 53);
             this.textHarga.TabIndex = 15;
             this.textHarga.TextOffset = new System.Drawing.Point(6, -1);
+            this.textHarga.TextChanged += new System.EventHandler(this.textHarga_TextChanged);
             // 
             // btnFotoKamar
             // 
@@ -287,7 +288,7 @@
             this.btnHapusFoto.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
             this.btnHapusFoto.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.btnHapusFoto.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.btnHapusFoto.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(254)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.btnHapusFoto.FillColor = System.Drawing.Color.MistyRose;
             this.btnHapusFoto.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnHapusFoto.ForeColor = System.Drawing.Color.Red;
             this.btnHapusFoto.Location = new System.Drawing.Point(496, 222);

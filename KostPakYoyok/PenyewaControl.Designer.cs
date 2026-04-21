@@ -130,9 +130,8 @@
             this.labelDataKamar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
             this.labelDataKamar.Location = new System.Drawing.Point(305, 23);
             this.labelDataKamar.Name = "labelDataKamar";
-            this.labelDataKamar.Size = new System.Drawing.Size(27, 32);
+            this.labelDataKamar.Size = new System.Drawing.Size(0, 32);
             this.labelDataKamar.TabIndex = 55;
-            this.labelDataKamar.Text = "0";
             // 
             // labelHarusbayar
             // 

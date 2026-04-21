@@ -276,7 +276,7 @@
             this.btnEditKamar.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
             this.btnEditKamar.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.btnEditKamar.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.btnEditKamar.FillColor = System.Drawing.Color.Gray;
+            this.btnEditKamar.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
             this.btnEditKamar.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnEditKamar.ForeColor = System.Drawing.Color.White;
             this.btnEditKamar.Location = new System.Drawing.Point(24, 620);
