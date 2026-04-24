@@ -11,7 +11,7 @@ namespace KostPakYoyok
     public partial class DashboardControl : UserControl
     {
         // Endpoint GET /api/dashboard
-        private const string DashboardApiUrl = "http://localhost:8000/api/dashboard";
+        private const string DashboardApiUrl = "https://kost.arcv.web.id/api/dashboard";
 
         public DashboardControl()
         {

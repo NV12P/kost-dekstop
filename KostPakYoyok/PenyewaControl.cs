@@ -12,7 +12,7 @@ namespace KostPakYoyok
 {
     public partial class PenyewaControl : UserControl
     {
-        private const string PenyewaApiUrl = "http://localhost:8000/api/penyewa";
+        private const string PenyewaApiUrl = "https://kost.arcv.web.id/api/penyewa";
 
         private JToken selectedRoomItem = null;
         private long selectedRoomPrice = 0;
@@ -109,8 +109,19 @@ namespace KostPakYoyok
         private Panel CreateRoomRow(JToken item, int y)
         {
             string status = item["status"]?.ToString().ToLower() ?? "tersedia";
-            // Ambil nomor kamar mang
-            string namaKamar = item["nomor_kamar"]?.ToString() ?? item["nomor"]?.ToString() ?? item["nama"]?.ToString() ?? "Kamar";
+            // Ambil nomor kamar mang, langsung pakai key 'nama' sesuai controller Laravel
+            string rawNamaKamar = item["nama"]?.ToString() ?? "Kamar";
+            
+            // Bersihkan string dari kotoran ID atau typo (misal: "7 amar 1" jadi "Kamar 1")
+            string namaKamar = System.Text.RegularExpressions.Regex.Replace(rawNamaKamar, @"^\d+\s*\.?[ ]*", "");
+            if (namaKamar.Contains("amar") && !namaKamar.Contains("Kamar"))
+            {
+                namaKamar = namaKamar.Replace("amar", "Kamar");
+            }
+            if (namaKamar.StartsWith("KamarKamar")) 
+            {
+                namaKamar = namaKamar.Replace("KamarKamar", "Kamar");
+            }
 
             Panel p = new Panel()
             {
@@ -173,19 +184,21 @@ namespace KostPakYoyok
             var penyewa = roomItem["penyewa"];
             if (penyewa == null) return;
 
-            selectedRoomPrice = roomItem["harga_kamar_perbulan"]?.ToObject<long>() ?? roomItem["harga"]?.ToObject<long>() ?? 0;
+            // Di controller baru pakai key 'harga' mang
+            selectedRoomPrice = roomItem["harga"]?.ToObject<long>() ?? roomItem["harga_kamar_perbulan"]?.ToObject<long>() ?? 0;
 
-            // Ambil ID kamar mang sesuai request
-            string noKamar = roomItem["id"]?.ToString() ?? roomItem["id_kamar"]?.ToString() ?? "-";
+            // Ambil ID kamar mang (room ID)
+            string idKamar = roomItem["id"]?.ToString() ?? "-";
 
-            label21.Text = "Informasi Data Kamar - " + noKamar;
+            // Rapikan judulnya mang, jangan ada angka ID yang ganggu!
+            label21.Text = "Informasi Data Kamar " + nomorKamar; 
 
             textNama.Text = penyewa["nama"]?.ToString() ?? "";
             textNomorTelepon.Text = penyewa["telp"]?.ToString() ?? "";
             textBulanSewa.Text = penyewa["sewabrpbulan"]?.ToString() ?? "1";
             textCatatan.Text = penyewa["catatan"]?.ToString() ?? "";
 
-            // LOGIKA TUNAI VS TRANSFER (Cek dua kemungkinan nama field dari API)
+            // LOGIKA TUNAI VS TRANSFER
             string metode = (penyewa["metodepembayaran"] ?? penyewa["metode_pembayaran"])?.ToString().ToLower() ?? "";
             
             // Lebar awal textTotalCicilan biasanya sekitar 200-an, kita buat dinamis mang
@@ -280,23 +293,35 @@ namespace KostPakYoyok
                     c.DefaultRequestHeaders.Authorization =
                         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
 
-                    // Ambil metode pembayaran yang asli dari data penyewa mang
-                    var penyewaData = selectedRoomItem["penyewa"];
-                    string currentMetode = (penyewaData["metodepembayaran"] ?? penyewaData["metode_pembayaran"])?.ToString() ?? "transfer";
+                    // Ambil data asli dari penyewa mang biar lengkap pas dikirim ulang
+                    var pData = selectedRoomItem["penyewa"];
+                    string nama = textNama.Text; // Ambil dari textbox langsung mang biar bisa diedit
+                    string telp = textNomorTelepon.Text; // Ambil dari textbox langsung mang
+                    string metode = (pData["metodepembayaran"] ?? pData["metode_pembayaran"])?.ToString() ?? "transfer";
+                    
+                    // Cek status pembayaran (biasanya default pending)
+                    string status = (pData["statuspembayaran"] ?? pData["status_pembayaran"])?.ToString() ?? "pending";
 
                     var form = new MultipartFormDataContent();
 
-                    form.Add(new StringContent(textNama.Text), "nama_profile");
-                    form.Add(new StringContent(textNama.Text), "nama_penyewa");
-                    form.Add(new StringContent(textNomorTelepon.Text), "no_telp_profile");
-                    form.Add(new StringContent(textNomorTelepon.Text), "telp_penyewa");
+                    // SESUAI CONTROLLER LARAVEL MANG!
+                    form.Add(new StringContent(nama), "nama_penyewa");
+                    form.Add(new StringContent(telp), "telp_penyewa");
                     form.Add(new StringContent(bulan.ToString()), "sewa_berapa_bulan");
-                    form.Add(new StringContent(currentMetode), "metode_pembayaran"); // Pake yang asli mang!
-                    form.Add(new StringContent("pending"), "status_pembayaran");
+                    form.Add(new StringContent(metode), "metode_pembayaran");
+                    form.Add(new StringContent(status), "status_pembayaran");
+                    
+                    // Field opsional mang
                     form.Add(new StringContent(textCatatan.Text), "catatan");
-                    form.Add(new StringContent(cicilanBaru.ToString()), "cicilan");
+                    
+                    if (cicilanBaru > 0)
+                    {
+                        form.Add(new StringContent(cicilanBaru.ToString()), "cicilan");
+                    }
 
-                    // upload foto
+                    form.Add(new StringContent("PUT"), "_method"); // Laravel Spoofing mang!
+
+                    // upload foto bukti cicilan mang
                     if (!string.IsNullOrWhiteSpace(selectedBuktiPath))
                     {
                         byte[] bytes = System.IO.File.ReadAllBytes(selectedBuktiPath);
@@ -312,7 +337,8 @@ namespace KostPakYoyok
                         );
                     }
 
-                    var resp = await c.PutAsync(
+                    // PAKAI POST MANG! Biar Multipart-nya kebaca Laravel
+                    var resp = await c.PostAsync(
                         $"{PenyewaApiUrl}/{selectedRoomItem["id"]}",
                         form
                     );
@@ -370,10 +396,13 @@ namespace KostPakYoyok
                     c.DefaultRequestHeaders.Authorization =
                         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
 
-                    // FIX: HARUS PUT bukan POST
-                    var resp = await c.PutAsync(
+                    // Pake spoofing biar aman mang
+                    var content = new MultipartFormDataContent();
+                    content.Add(new StringContent("PUT"), "_method");
+
+                    var resp = await c.PostAsync(
                         $"{PenyewaApiUrl}/akhiri/{selectedRoomItem["id"]}",
-                        null
+                        content
                     );
 
                     if (resp.IsSuccessStatusCode)

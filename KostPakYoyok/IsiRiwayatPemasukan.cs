@@ -12,7 +12,7 @@ namespace KostPakYoyok
 {
     public partial class IsiRiwayatPemasukan : UserControl
     {
-        private const string ApiUrl = "http://localhost:8000/api/keuangan";
+        private const string ApiUrl = "https://kost.arcv.web.id/api/keuangan";
         private const int CardSpacing = 15;
         private const int StartY = 16;
 

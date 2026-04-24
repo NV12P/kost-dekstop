@@ -12,7 +12,7 @@ namespace KostPakYoyok
     public partial class FormProfil : Form
     {
         // Adjust endpoint if your API uses a different URL
-        private const string ProfileApiUrl = "http://localhost:8000/api/profile";
+        private const string ProfileApiUrl = "https://kost.arcv.web.id/api/profile";
 
         public FormProfil()
         {

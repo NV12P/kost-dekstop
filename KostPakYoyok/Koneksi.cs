@@ -19,7 +19,7 @@ class Program
         var json = JsonConvert.SerializeObject(data);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync("http://127.0.0.1:8000/api/login", content);
+        var response = await client.PostAsync("https://kost.arcv.web.id/api/login", content);
 
         var result = await response.Content.ReadAsStringAsync();
 

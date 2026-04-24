@@ -12,7 +12,7 @@ namespace KostPakYoyok
 {
     public partial class FormKamar : Form
     {
-        private const string KamarApiUrl = "http://localhost:8000/api/kamar";
+        private const string KamarApiUrl = "https://kost.arcv.web.id/api/kamar";
         private int? editId = null;
         private bool isEditMode = false;
         private string selectedFotoPath = ""; 

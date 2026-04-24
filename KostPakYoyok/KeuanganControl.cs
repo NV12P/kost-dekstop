@@ -11,7 +11,7 @@ namespace KostPakYoyok
 {
     public partial class KeuanganControl : UserControl
     {
-        private const string KeuanganApiUrl = "http://localhost:8000/api/keuangan";
+        private const string KeuanganApiUrl = "https://kost.arcv.web.id/api/keuangan";
         private int selectedId = 0;
 
         public KeuanganControl()
