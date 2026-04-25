@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RiwayatPenghuniLama));
             this.guna2ShadowPanel2 = new Guna.UI2.WinForms.Guna2ShadowPanel();
+            this.guna2Button9 = new Guna.UI2.WinForms.Guna2Button();
             this.guna2Button3 = new Guna.UI2.WinForms.Guna2Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -71,7 +72,6 @@
             this.guna2Button5 = new Guna.UI2.WinForms.Guna2Button();
             this.label15 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.guna2Button9 = new Guna.UI2.WinForms.Guna2Button();
             this.guna2ShadowPanel2.SuspendLayout();
             this.guna2Panel2.SuspendLayout();
             this.guna2ShadowPanel8.SuspendLayout();
@@ -102,6 +102,22 @@
             this.guna2ShadowPanel2.ShadowDepth = 0;
             this.guna2ShadowPanel2.Size = new System.Drawing.Size(1712, 126);
             this.guna2ShadowPanel2.TabIndex = 21;
+            // 
+            // guna2Button9
+            // 
+            this.guna2Button9.BorderRadius = 8;
+            this.guna2Button9.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.guna2Button9.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.guna2Button9.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.guna2Button9.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.guna2Button9.FillColor = System.Drawing.SystemColors.Control;
+            this.guna2Button9.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
+            this.guna2Button9.ForeColor = System.Drawing.Color.DarkGray;
+            this.guna2Button9.Location = new System.Drawing.Point(401, 26);
+            this.guna2Button9.Name = "guna2Button9";
+            this.guna2Button9.Size = new System.Drawing.Size(127, 24);
+            this.guna2Button9.TabIndex = 33;
+            this.guna2Button9.Text = "Klik Detail ▲";
             // 
             // guna2Button3
             // 
@@ -664,26 +680,11 @@
             this.panel1.Size = new System.Drawing.Size(1902, 25);
             this.panel1.TabIndex = 23;
             // 
-            // guna2Button9
-            // 
-            this.guna2Button9.BorderRadius = 8;
-            this.guna2Button9.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.guna2Button9.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.guna2Button9.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.guna2Button9.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.guna2Button9.FillColor = System.Drawing.SystemColors.Control;
-            this.guna2Button9.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
-            this.guna2Button9.ForeColor = System.Drawing.Color.DarkGray;
-            this.guna2Button9.Location = new System.Drawing.Point(401, 26);
-            this.guna2Button9.Name = "guna2Button9";
-            this.guna2Button9.Size = new System.Drawing.Size(127, 24);
-            this.guna2Button9.TabIndex = 33;
-            this.guna2Button9.Text = "Klik Detail ▲";
-            // 
             // RiwayatPenghuniLama
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.guna2ShadowPanel2);

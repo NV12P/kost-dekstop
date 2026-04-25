@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RiwayatPenghuniAktif));
             this.panelUtama = new Guna.UI2.WinForms.Guna2ShadowPanel();
-            this.guna2Button9 = new Guna.UI2.WinForms.Guna2Button();
+            this.btnKlikDetail = new Guna.UI2.WinForms.Guna2Button();
             this.nomorData = new Guna.UI2.WinForms.Guna2Button();
             this.labelNIK = new System.Windows.Forms.Label();
             this.labelPenyewa = new System.Windows.Forms.Label();
@@ -38,6 +38,7 @@
             this.statusData = new Guna.UI2.WinForms.Guna2Button();
             this.guna2Button1 = new Guna.UI2.WinForms.Guna2Button();
             this.panelDetailUtama = new Guna.UI2.WinForms.Guna2Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.guna2ShadowPanel8 = new Guna.UI2.WinForms.Guna2ShadowPanel();
             this.guna2Button8 = new Guna.UI2.WinForms.Guna2Button();
             this.label20 = new System.Windows.Forms.Label();
@@ -71,7 +72,6 @@
             this.StatusPembayaran = new Guna.UI2.WinForms.Guna2Button();
             this.labelBulan = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.panelUtama.SuspendLayout();
             this.panelDetailUtama.SuspendLayout();
             this.guna2ShadowPanel8.SuspendLayout();
@@ -87,7 +87,7 @@
             // panelUtama
             // 
             this.panelUtama.BackColor = System.Drawing.Color.Transparent;
-            this.panelUtama.Controls.Add(this.guna2Button9);
+            this.panelUtama.Controls.Add(this.btnKlikDetail);
             this.panelUtama.Controls.Add(this.nomorData);
             this.panelUtama.Controls.Add(this.labelNIK);
             this.panelUtama.Controls.Add(this.labelPenyewa);
@@ -103,25 +103,25 @@
             this.panelUtama.Size = new System.Drawing.Size(1712, 126);
             this.panelUtama.TabIndex = 19;
             // 
-            // guna2Button9
+            // btnKlikDetail
             // 
-            this.guna2Button9.BorderRadius = 8;
-            this.guna2Button9.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.guna2Button9.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.guna2Button9.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.guna2Button9.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.guna2Button9.FillColor = System.Drawing.SystemColors.Control;
-            this.guna2Button9.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
-            this.guna2Button9.ForeColor = System.Drawing.Color.DarkGray;
-            this.guna2Button9.HoverState.BorderColor = System.Drawing.SystemColors.Control;
-            this.guna2Button9.HoverState.FillColor = System.Drawing.SystemColors.Control;
-            this.guna2Button9.HoverState.ForeColor = System.Drawing.Color.DarkGray;
-            this.guna2Button9.Location = new System.Drawing.Point(401, 26);
-            this.guna2Button9.Name = "guna2Button9";
-            this.guna2Button9.PressedDepth = 0;
-            this.guna2Button9.Size = new System.Drawing.Size(127, 24);
-            this.guna2Button9.TabIndex = 32;
-            this.guna2Button9.Text = "Klik Detail ▲";
+            this.btnKlikDetail.BorderRadius = 8;
+            this.btnKlikDetail.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.btnKlikDetail.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.btnKlikDetail.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.btnKlikDetail.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.btnKlikDetail.FillColor = System.Drawing.SystemColors.Control;
+            this.btnKlikDetail.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
+            this.btnKlikDetail.ForeColor = System.Drawing.Color.DarkGray;
+            this.btnKlikDetail.HoverState.BorderColor = System.Drawing.SystemColors.Control;
+            this.btnKlikDetail.HoverState.FillColor = System.Drawing.SystemColors.Control;
+            this.btnKlikDetail.HoverState.ForeColor = System.Drawing.Color.DarkGray;
+            this.btnKlikDetail.Location = new System.Drawing.Point(401, 26);
+            this.btnKlikDetail.Name = "btnKlikDetail";
+            this.btnKlikDetail.PressedDepth = 0;
+            this.btnKlikDetail.Size = new System.Drawing.Size(127, 24);
+            this.btnKlikDetail.TabIndex = 32;
+            this.btnKlikDetail.Text = "Klik Detail ▲";
             // 
             // nomorData
             // 
@@ -235,7 +235,18 @@
             this.panelDetailUtama.Name = "panelDetailUtama";
             this.panelDetailUtama.Size = new System.Drawing.Size(1640, 749);
             this.panelDetailUtama.TabIndex = 20;
-            //this.panelDetailUtama.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDetailUtama_Paint);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(248)))), ((int)(((byte)(248)))));
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label1.Location = new System.Drawing.Point(1440, 55);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(154, 23);
+            this.label1.TabIndex = 41;
+            this.label1.Text = "RIWAYAT CICILAN";
             // 
             // guna2ShadowPanel8
             // 
@@ -245,7 +256,7 @@
             this.guna2ShadowPanel8.Controls.Add(this.guna2TextBox1);
             this.guna2ShadowPanel8.Controls.Add(this.label21);
             this.guna2ShadowPanel8.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(236)))), ((int)(((byte)(241)))));
-            this.guna2ShadowPanel8.Location = new System.Drawing.Point(746, 97);
+            this.guna2ShadowPanel8.Location = new System.Drawing.Point(746, 536);
             this.guna2ShadowPanel8.Name = "guna2ShadowPanel8";
             this.guna2ShadowPanel8.Radius = 8;
             this.guna2ShadowPanel8.ShadowColor = System.Drawing.Color.Black;
@@ -374,7 +385,7 @@
             this.panelCicilan.Controls.Add(this.textNominalCicilan);
             this.panelCicilan.Controls.Add(this.labelJumlahCicilan);
             this.panelCicilan.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(236)))), ((int)(((byte)(241)))));
-            this.panelCicilan.Location = new System.Drawing.Point(746, 271);
+            this.panelCicilan.Location = new System.Drawing.Point(746, 97);
             this.panelCicilan.Name = "panelCicilan";
             this.panelCicilan.Radius = 8;
             this.panelCicilan.ShadowColor = System.Drawing.Color.Black;
@@ -686,18 +697,6 @@
             this.panel1.Size = new System.Drawing.Size(1902, 25);
             this.panel1.TabIndex = 21;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(248)))), ((int)(((byte)(248)))));
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label1.Location = new System.Drawing.Point(1440, 55);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(154, 23);
-            this.label1.TabIndex = 41;
-            this.label1.Text = "RIWAYAT CICILAN";
-            // 
             // RiwayatPenghuniAktif
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -775,7 +774,7 @@
         private System.Windows.Forms.Label label21;
         private Guna.UI2.WinForms.Guna2PictureBox pictureButkiCicilan;
         private System.Windows.Forms.Panel panel1;
-        private Guna.UI2.WinForms.Guna2Button guna2Button9;
+        private Guna.UI2.WinForms.Guna2Button btnKlikDetail;
         private System.Windows.Forms.Label label1;
     }
 }
