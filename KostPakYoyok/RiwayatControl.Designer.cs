@@ -35,7 +35,7 @@
             this.btnPenghuniAktif = new Guna.UI2.WinForms.Guna2Button();
             this.guna2TextBox1 = new Guna.UI2.WinForms.Guna2TextBox();
             this.panelRiwayat = new System.Windows.Forms.Panel();
-            this.guna2HtmlLabel1 = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            this.label1 = new System.Windows.Forms.Label();
             this.guna2ShadowPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -151,28 +151,28 @@
             // panelRiwayat
             // 
             this.panelRiwayat.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelRiwayat.Location = new System.Drawing.Point(0, 124);
+            this.panelRiwayat.Location = new System.Drawing.Point(0, 135);
             this.panelRiwayat.Name = "panelRiwayat";
-            this.panelRiwayat.Size = new System.Drawing.Size(1902, 726);
+            this.panelRiwayat.Size = new System.Drawing.Size(1902, 715);
             this.panelRiwayat.TabIndex = 21;
             // 
-            // guna2HtmlLabel1
+            // label1
             // 
-            this.guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent;
-            this.guna2HtmlLabel1.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.guna2HtmlLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
-            this.guna2HtmlLabel1.Location = new System.Drawing.Point(81, 0);
-            this.guna2HtmlLabel1.Name = "guna2HtmlLabel1";
-            this.guna2HtmlLabel1.Size = new System.Drawing.Size(269, 43);
-            this.guna2HtmlLabel1.TabIndex = 22;
-            this.guna2HtmlLabel1.Text = "Riwayat & Aktivitas";
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))));
+            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
+            this.label1.Location = new System.Drawing.Point(81, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(313, 41);
+            this.label1.TabIndex = 23;
+            this.label1.Text = "Riwayat dan Aktivitas";
             // 
             // RiwayatControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.Controls.Add(this.guna2HtmlLabel1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.panelRiwayat);
             this.Controls.Add(this.guna2TextBox1);
             this.Controls.Add(this.guna2ShadowPanel2);
@@ -193,6 +193,6 @@
         private Guna.UI2.WinForms.Guna2TextBox guna2TextBox1;
         private Guna.UI2.WinForms.Guna2Button btnPenghuniLama;
         private System.Windows.Forms.Panel panelRiwayat;
-        private Guna.UI2.WinForms.Guna2HtmlLabel guna2HtmlLabel1;
+        private System.Windows.Forms.Label label1;
     }
 }
