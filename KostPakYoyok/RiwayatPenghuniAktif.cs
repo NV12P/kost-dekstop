@@ -128,10 +128,11 @@ namespace KostPakYoyok
             var cicilanArr = d["cicilan"] as JArray ?? new JArray();
             
             // Hitung total harga & bayar
+            long hargaPerBulan = 400000; // Default price mang
             string durasiText = d["durasi"]?.ToString() ?? "1 Bulan";
             int totalBulan = int.Parse(new string(durasiText.Where(char.IsDigit).ToArray()) ?? "1");
-            
-            // Karena di api riwayat gak dapet harga per bulan, kita itung dari nominal cicilan pertama atau default
+            long totalHargaTagihan = hargaPerBulan * totalBulan;
+
             long totalBayar = 0;
             foreach(var c in cicilanArr) {
                 string nomStr = new string(c["nominal"]?.ToString().Where(char.IsDigit).ToArray());
@@ -142,8 +143,21 @@ namespace KostPakYoyok
             var p1 = new Guna2Panel { Size = new Size(580, 95), Location = new Point(35, 40), BorderRadius = 14, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             var btnHouse = new Guna2Button { Size = new Size(65, 65), Location = new Point(15, 15), BorderRadius = 14, FillColor = Color.FromArgb(26, 18, 101) };
             try {
-                string[] levels = { "house.png", Path.Combine(Application.StartupPath, "house.png"), Path.Combine(Application.StartupPath, "..\\..\\house.png") };
-                foreach(string path in levels) { if (File.Exists(path)) { btnHouse.Image = Image.FromFile(path); btnHouse.ImageSize = new Size(30, 30); break; } }
+                string[] possiblePaths = {
+                    "house.png",
+                    Path.Combine(Application.StartupPath, "house.png"),
+                    Path.Combine(Application.StartupPath, "..\\..\\house.png"),
+                    Path.Combine(Application.StartupPath, "..\\..\\..\\house.png"),
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "house.png"),
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\..\\house.png")
+                };
+                foreach(string path in possiblePaths) {
+                    if (File.Exists(path)) {
+                        btnHouse.Image = Image.FromFile(path);
+                        btnHouse.ImageSize = new Size(30, 30);
+                        break;
+                    }
+                }
             } catch { }
             p1.Controls.Add(btnHouse);
             p1.Controls.Add(new Label { Text = "LOKASI KAMAR", Location = new Point(95, 20), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
@@ -154,15 +168,14 @@ namespace KostPakYoyok
             var p3 = new Guna2Panel { Size = new Size(280, 130), Location = new Point(35, 150), BorderRadius = 14, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             p3.Controls.Add(new Label { Text = "STATUS TAGIHAN", Location = new Point(20, 20), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             
-            // Logic Lunas di Riwayat API mang!
-            bool isLunas = item["status"]?.ToString() == "Check-Out" || (item["status"]?.ToString() == "Check-In" && totalBayar > 0); // Simplified mang!
+            bool isLunas = totalBayar >= totalHargaTagihan;
             p3.Controls.Add(new Label { Text = isLunas ? "✔️ Lunas" : "❌ BELUM LUNAS", Location = new Point(18, 50), Font = new Font("Segoe UI", 14, isLunas ? FontStyle.Bold : (FontStyle.Bold | FontStyle.Italic)), ForeColor = isLunas ? Color.LimeGreen : Color.Red, AutoSize = true });
-            p3.Controls.Add(new Label { Text = "STATUS: " + (item["status"]?.ToString() ?? "AKTIF").ToUpper(), Location = new Point(20, 95), Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
+            p3.Controls.Add(new Label { Text = "TOTAL BIAYA: Rp. " + totalHargaTagihan.ToString("N0", cultureIndo), Location = new Point(20, 95), Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(p3);
 
             var p4 = new Guna2Panel { Size = new Size(280, 130), Location = new Point(335, 150), BorderRadius = 14, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             p4.Controls.Add(new Label { Text = "METODE & DURASI", Location = new Point(20, 20), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
-            p4.Controls.Add(new Label { Text = d["durasi"]?.ToString().ToUpper() ?? "1 BULAN", Location = new Point(18, 50), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
+            p4.Controls.Add(new Label { Text = totalBulan + " BULAN", Location = new Point(18, 50), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             p4.Controls.Add(new Label { Text = d["metode"]?.ToString().ToUpper() ?? "TRANSFER", Location = new Point(20, 95), Font = new Font("Segoe UI", 8, FontStyle.Bold | FontStyle.Italic), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             pD.Controls.Add(p4);
 
@@ -174,13 +187,23 @@ namespace KostPakYoyok
 
             var pBContent = new Guna2Panel { Size = new Size(580, 200), Location = new Point(35, 365), BorderRadius = 14, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1, Visible = false, AutoScroll = true };
             int cyB = 20;
+            long sSaldo = totalBayar;
             for (int i = 0; i < totalBulan; i++) {
                 DateTime b = start.AddMonths(i);
+                bool lBln = sSaldo >= hargaPerBulan;
+                long kura = lBln ? 0 : (hargaPerBulan - sSaldo);
+                sSaldo = lBln ? (sSaldo - hargaPerBulan) : 0;
+
                 pBContent.Controls.Add(new Label { Text = b.ToString("MMMM yyyy", cultureIndo).ToUpper(), Location = new Point(25, cyB), Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = Color.DimGray, AutoSize = true });
-                pBContent.Controls.Add(new Guna2Button { Text = "✔️ Lunas", Size = new Size(100, 30), Location = new Point(450, cyB - 2), BorderRadius = 14, FillColor = Color.FromArgb(220, 252, 231), ForeColor = Color.LimeGreen, Font = new Font("Segoe UI", 7, FontStyle.Bold) });
-                cyB += 50;
+                pBContent.Controls.Add(new Guna2Button { Text = lBln ? "✔️ Lunas" : "❌ Belum Lunas", Size = new Size(120, 30), Location = new Point(430, cyB - 2), BorderRadius = 14, FillColor = lBln ? Color.FromArgb(220, 252, 231) : Color.FromArgb(254, 242, 242), ForeColor = lBln ? Color.LimeGreen : Color.Red, Font = new Font("Segoe UI", 7, FontStyle.Bold) });
+                cyB += 45;
+                if (!lBln) {
+                    pBContent.Controls.Add(new Label { Text = "* Masih kurang Rp. " + kura.ToString("N0", cultureIndo) + " untuk bulan ini", Location = new Point(25, cyB), Font = new Font("Segoe UI", 9, FontStyle.Bold | FontStyle.Italic), ForeColor = Color.Red, AutoSize = true });
+                    cyB += 35;
+                }
+                cyB += 15;
             }
-            pBContent.Height = cyB + 10; pD.Controls.Add(pBContent);
+            pBContent.Height = Math.Min(400, cyB + 10); pD.Controls.Add(pBContent);
 
             pBHeader.Click += (s, e) => {
                 this.SuspendLayout();
@@ -212,15 +235,67 @@ namespace KostPakYoyok
             p.Controls.Add(new Label { Text = tc.ToString("dddd, dd/MM/yyyy", cultureIndo), Location = new Point(20, 80), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             
             string buktiUrl = d["bukti"]?.ToString();
-            bool hasImage = !string.IsNullOrEmpty(buktiUrl) && buktiUrl.Contains("http");
-            var pic = new Guna2PictureBox { Size = new Size(p.Width - 40, 240), Location = new Point(20, 115), BorderRadius = 14, Visible = false, SizeMode = PictureBoxSizeMode.Zoom, ImageLocation = buktiUrl };
-            var pNoImg = new Guna2Panel { Size = new Size(p.Width - 40, 60), Location = new Point(20, 115), BorderRadius = 10, FillColor = Color.FromArgb(254, 242, 242), Visible = false };
-            pNoImg.Controls.Add(new Label { Text = "Gambar tidak diunggah", Font = new Font("Segoe UI", 9, FontStyle.Bold | FontStyle.Italic), ForeColor = Color.Red, AutoSize = false, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter });
+            bool hasImage = !string.IsNullOrEmpty(buktiUrl);
+            
+            // Resolve URL Mang!
+            if (hasImage) {
+                if (!buktiUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)) {
+                    string cleanPath = buktiUrl.Replace("\\", "/").TrimStart('/');
+                    if (cleanPath.StartsWith("storage/", StringComparison.OrdinalIgnoreCase)) {
+                        buktiUrl = "https://kost.arcv.web.id/" + cleanPath;
+                    } else {
+                        buktiUrl = "https://kost.arcv.web.id/storage/" + cleanPath;
+                    }
+                } else {
+                    buktiUrl = buktiUrl.Replace("http://", "https://");
+                }
+            }
 
-            btnB.Click += (s, e) => {
+            var pic = new Guna2PictureBox { 
+                Size = new Size(p.Width - 40, 240), 
+                Location = new Point(20, 115), 
+                BorderRadius = 14, 
+                Visible = false, 
+                SizeMode = PictureBoxSizeMode.CenterImage, // Coba CenterImage mang!
+                BackColor = Color.FromArgb(241, 245, 249),
+                Cursor = Cursors.Hand 
+            };
+
+            var pNoImg = new Guna2Panel { Size = new Size(p.Width - 40, 60), Location = new Point(20, 115), BorderRadius = 10, FillColor = Color.FromArgb(254, 242, 242), Visible = false };
+            var lblNoImg = new Label { Text = hasImage ? "Memuat gambar..." : "Gambar tidak diunggah", Font = new Font("Segoe UI", 9, FontStyle.Bold | FontStyle.Italic), ForeColor = Color.Red, AutoSize = false, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter };
+            pNoImg.Controls.Add(lblNoImg);
+
+            btnB.Click += async (s, e) => {
                 this.SuspendLayout();
-                if (hasImage) { pic.Visible = !pic.Visible; p.Height = pic.Visible ? 370 : 110; }
-                else { pNoImg.Visible = !pNoImg.Visible; p.Height = pNoImg.Visible ? 190 : 110; }
+                if (hasImage) { 
+                    if (pic.Image == null) {
+                        pNoImg.Visible = true;
+                        lblNoImg.Text = "Memuat gambar...";
+                        try {
+                            using (var client = new HttpClient()) {
+                                var bytes = await client.GetByteArrayAsync(buktiUrl);
+                                using (var ms = new System.IO.MemoryStream(bytes)) {
+                                    pic.Image = Image.FromStream(ms);
+                                }
+                            }
+                            pNoImg.Visible = false;
+                            pic.Visible = true;
+                            pic.Cursor = Cursors.Hand; // Biar tau bisa diklik mang!
+                        } catch {
+                            lblNoImg.Text = "Gagal memuat gambar";
+                            pNoImg.Visible = true;
+                            pic.Visible = false;
+                        }
+                    } else {
+                        pic.Visible = !pic.Visible;
+                        if (!pic.Visible) pNoImg.Visible = false;
+                    }
+                    p.Height = (pic.Visible || pNoImg.Visible) ? (pic.Visible ? 370 : 190) : 110; 
+                }
+                else { 
+                    pNoImg.Visible = !pNoImg.Visible; 
+                    p.Height = pNoImg.Visible ? 190 : 110; 
+                }
                 bool tutup = pic.Visible || pNoImg.Visible;
                 btnB.Text = tutup ? "Tutup" : "Bukti";
                 btnB.FillColor = tutup ? Color.FromArgb(254, 242, 242) : Color.FromArgb(26, 18, 101);
@@ -228,6 +303,21 @@ namespace KostPakYoyok
                 UpdateDHeight(pD); container.Height = pD.Bottom + 10; ReLayoutAll();
                 this.ResumeLayout(true);
             };
+
+            // ZOOM LOGIC MANG!
+            pic.Click += (s, e) => {
+                if (pic.Image != null) {
+                    Form mainForm = this.FindForm();
+                    using (OverlayForm overlay = new OverlayForm(mainForm)) {
+                        overlay.Show();
+                        using (FormZoomGambar zoom = new FormZoomGambar(pic.Image)) {
+                            zoom.Owner = overlay;
+                            zoom.ShowDialog();
+                        }
+                    }
+                }
+            };
+
             p.Controls.Add(btnB); p.Controls.Add(pic); p.Controls.Add(pNoImg);
             return p;
         }

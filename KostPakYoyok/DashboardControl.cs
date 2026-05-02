@@ -1,16 +1,18 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace KostPakYoyok
 {
     public partial class DashboardControl : UserControl
     {
-        // Endpoint GET /api/dashboard
         private const string DashboardApiUrl = "https://kost.arcv.web.id/api/dashboard";
 
         public DashboardControl()
@@ -18,24 +20,21 @@ namespace KostPakYoyok
             InitializeComponent();
         }
 
-        // Dipanggil saat control di-load
         private async void DashboardControl_Load(object sender, EventArgs e)
         {
             await LoadDashboardAsync();
         }
 
-        // Tombol "Tahun ini"
         private async void btnResultTahun_Click(object sender, EventArgs e)
         {
             await LoadDashboardAsync();
         }
 
-        // Ambil data dari API menggunakan Bearer token (Session.Token) dan update UI
         private async Task LoadDashboardAsync()
         {
             btnResultTahun.Enabled = false;
-            var previousCursor = Cursor.Current;
-            Cursor.Current = Cursors.WaitCursor;
+            var previousCursor = System.Windows.Forms.Cursor.Current;
+            System.Windows.Forms.Cursor.Current = Cursors.WaitCursor;
 
             try
             {
@@ -52,114 +51,81 @@ namespace KostPakYoyok
                         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
 
                     HttpResponseMessage response;
-                    try
-                    {
-                        response = await client.GetAsync(DashboardApiUrl);
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        MessageBox.Show("Network error: " + ex.Message, "Network error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                    catch (TaskCanceledException ex)
-                    {
-                        MessageBox.Show("Request timed out: " + ex.Message, "Timeout", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+                    try { response = await client.GetAsync(DashboardApiUrl); }
+                    catch (Exception ex) { MessageBox.Show("Error Koneksi: " + ex.Message); return; }
 
                     var json = await response.Content.ReadAsStringAsync();
+                    if (!response.IsSuccessStatusCode) return;
 
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        MessageBox.Show($"Server returned {(int)response.StatusCode} {response.ReasonPhrase}\nResponse: {json}", "Server error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+                    DashboardResponse res = JsonConvert.DeserializeObject<DashboardResponse>(json);
 
-                    DashboardResponse res;
-                    try
-                    {
-                        res = JsonConvert.DeserializeObject<DashboardResponse>(json);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Gagal mem-parse response dari server:\n" + ex.Message + "\n\nResponse:\n" + json, "Parse error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    // Ensure chart area exists and series "Sewa" exists
                     if (chart1.ChartAreas.Count == 0) return;
                     var area = chart1.ChartAreas[0];
-                    if (chart1.Series.IndexOf("Sewa") < 0) return;
+                    if (chart1.Series.Count == 0) return;
+                    var series = chart1.Series[0];
+                    series.Points.Clear();
 
-                    // Prepare months Jan..Dec in order and integer Y range 0..5
-                    int[] monthValues = Enumerable.Repeat(0, 13).ToArray(); // index 0 unused
-
-                    if (res?.sewa_aktif != null)
-                    {
-                        foreach (var item in res.sewa_aktif)
-                        {
-                            try
-                            {
-                                int bulan = item.bulan;
-                                if (bulan < 1 || bulan > 12) continue;
-
-                                int val = Convert.ToInt32(Math.Round(Convert.ToDouble(item.total)));
-                                monthValues[bulan] += val;
-                            }
-                            catch
-                            {
-                                // ignore malformed items
-                            }
+                    int[] monthValues = new int[13]; 
+                    if (res?.sewa_aktif != null) {
+                        foreach (var item in res.sewa_aktif) {
+                            if (item.bulan >= 1 && item.bulan <= 12) monthValues[item.bulan] += item.total;
                         }
                     }
 
-                    // Clamp aggregated results to 0..5
-                    for (int m = 1; m <= 12; m++)
-                        monthValues[m] = Math.Max(0, Math.Min(5, monthValues[m]));
+                    int maxVal = monthValues.Max();
+                    if (maxVal < 5) maxVal = 5;
 
-                    // Clear and repopulate series with months January..December
-                    var series = chart1.Series["Sewa"];
-                    series.Points.Clear();
+                    series.ChartType = SeriesChartType.Spline;
+                    series.Color = System.Drawing.Color.FromArgb(26, 18, 101); 
+                    series.BorderWidth = 1; 
+                    series["LineTension"] = "0.3"; 
+                    series.MarkerStyle = MarkerStyle.None;
+                    
+                    if (chart1.Legends.Count > 0) chart1.Legends[0].Enabled = false;
 
-                    // Ensure data labels are disabled (no numbers above X axis)
-                    series.IsValueShownAsLabel = false;
-
-                    for (int m = 1; m <= 12; m++)
-                    {
-                        string label = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m);
+                    var idCulture = new CultureInfo("id-ID");
+                    for (int m = 1; m <= 12; m++) {
+                        string label = idCulture.DateTimeFormat.GetAbbreviatedMonthName(m);
+                        if (label.Length > 1) label = char.ToUpper(label[0]) + label.Substring(1).ToLower();
                         series.Points.AddXY(label, monthValues[m]);
                     }
 
-                    // Configure X axis to show all months in order and avoid skipping
                     area.AxisX.Interval = 1;
                     area.AxisX.MajorGrid.Enabled = false;
+                    area.AxisX.LineColor = System.Drawing.Color.FromArgb(209, 213, 219); 
+                    area.AxisX.LabelStyle.Font = new System.Drawing.Font("Segoe UI", 8);
+                    area.AxisX.LabelStyle.ForeColor = System.Drawing.Color.DimGray;
+                    area.AxisX.IsMarginVisible = true; 
 
-                    // Configure Y axis to range 0..5 with integer ticks and no decimals
                     area.AxisY.Minimum = 0;
-                    area.AxisY.Maximum = 5;
-                    area.AxisY.Interval = 1;
-                    area.AxisY.LabelStyle.Format = "0";
+                    area.AxisY.Maximum = maxVal + 1;
+                    area.AxisY.Interval = 1; 
+                    area.AxisY.LabelStyle.Format = "0"; 
+                    area.AxisY.LabelStyle.Font = new System.Drawing.Font("Segoe UI", 8);
+                    area.AxisY.LabelStyle.ForeColor = System.Drawing.Color.DimGray;
+                    area.AxisY.LineColor = System.Drawing.Color.Transparent;
+                    
                     area.AxisY.MajorGrid.Enabled = true;
+                    area.AxisY.MajorGrid.LineColor = System.Drawing.Color.FromArgb(226, 232, 240);
+                    area.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Solid; 
 
-                    // Update kartu ringkasan:
-                    if (res != null)
-                    {
+                    area.InnerPlotPosition = new ElementPosition(7, 5, 90, 85);
+                    chart1.BackColor = System.Drawing.Color.White;
+                    area.BackColor = System.Drawing.Color.White;
+                    
+                    if (res != null) {
                         labelPemasukan.Text = "Rp " + res.pemasukan.ToString("N0", CultureInfo.InvariantCulture);
                         labelPengeluaran.Text = "Rp " + res.pengeluaran.ToString("N0", CultureInfo.InvariantCulture);
                         labelKamarTersedia.Text = res.kamar_tersedia.ToString();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 btnResultTahun.Enabled = true;
-                Cursor.Current = previousCursor;
+                System.Windows.Forms.Cursor.Current = previousCursor;
             }
         }
 
-        // Placeholder jika ada event lain pada designer
-        private void guna2Button3_Click(object sender, EventArgs e)
-        {
-        }
+        private void guna2Button3_Click(object sender, EventArgs e) { }
     }
 }

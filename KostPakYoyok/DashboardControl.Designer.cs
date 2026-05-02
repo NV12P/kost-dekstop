@@ -259,14 +259,14 @@
             this.chart1.ChartAreas.Add(chartArea2);
             legend2.Name = "Legend1";
             this.chart1.Legends.Add(legend2);
-            this.chart1.Location = new System.Drawing.Point(53, 148);
+            this.chart1.Location = new System.Drawing.Point(40, 140);
             this.chart1.Name = "chart1";
             series2.ChartArea = "ChartArea1";
             series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             series2.Legend = "Legend1";
             series2.Name = "Sewa";
             this.chart1.Series.Add(series2);
-            this.chart1.Size = new System.Drawing.Size(1282, 411);
+            this.chart1.Size = new System.Drawing.Size(1300, 400);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
