@@ -70,7 +70,6 @@ namespace KostPakYoyok
 
         private Panel CreateRow(JToken item, int index, int y)
         {
-            var detail = item["detail"];
             DateTime tgl; DateTime.TryParse(item["tanggal"]?.ToString(), out tgl);
 
             int cardW = 1400;
@@ -81,8 +80,10 @@ namespace KostPakYoyok
             var btnNo = new Guna2Button { Size = new Size(65, 65), Location = new Point(25, 20), BorderRadius = 14, FillColor = SystemColors.Control, ForeColor = Color.FromArgb(26, 18, 101), Font = new Font("Segoe UI", 18, FontStyle.Bold), Text = index.ToString() };
             var lblNama = new Label { Text = (item["penyewa"]?.ToString() ?? "User").ToLower(), Location = new Point(105, 48), Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true };
             var lblTgl = new Label { Text = tgl.ToString("dddd, dd/MM/yyyy", cultureIndo), Location = new Point(195, 23), Font = new Font("Segoe UI Semibold", 9, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true };
-            var btnSurvei = new Guna2Button { Size = new Size(80, 22), Location = new Point(105, 21), BorderRadius = 8, FillColor = Color.FromArgb(255, 248, 225), ForeColor = Color.FromArgb(255, 160, 0), Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "SURVEI" };
-            var btnKlik = new Guna2Button { Size = new Size(110, 22), Location = new Point(335, 21), BorderRadius = 8, FillColor = SystemColors.Control, ForeColor = Color.DarkGray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "Klik Detail ▲" };
+            
+            // Design Simpel: Tag SURVEI lebih kecil mang
+            var btnSurveiTag = new Guna2Button { Size = new Size(70, 20), Location = new Point(105, 22), BorderRadius = 6, FillColor = Color.FromArgb(255, 248, 225), ForeColor = Color.FromArgb(255, 160, 0), Font = new Font("Segoe UI", 7, FontStyle.Bold), Text = "SURVEI" };
+            var btnKlik = new Guna2Button { Size = new Size(110, 20), Location = new Point(335, 22), BorderRadius = 6, FillColor = SystemColors.Control, ForeColor = Color.DarkGray, Font = new Font("Segoe UI", 7, FontStyle.Bold), Text = "Klik Detail ▲" };
             
             string status = item["status"]?.ToString() ?? "Pending";
             var btnStatus = new Guna2Button { 
@@ -92,13 +93,14 @@ namespace KostPakYoyok
                 FillColor = status == "finish" ? Color.FromArgb(220, 252, 231) : (status == "cancel" ? Color.FromArgb(254, 242, 242) : Color.FromArgb(254, 249, 195)), 
                 ForeColor = status == "finish" ? Color.LimeGreen : (status == "cancel" ? Color.Red : Color.FromArgb(161, 98, 7)), 
                 Font = new Font("Segoe UI", 10, FontStyle.Bold), 
-                Text = status.ToUpper() 
+                Text = (status == "finish" ? "Berhasil" : (status == "cancel" ? "Dibatalkan" : "Pending")) 
             };
 
-            pU.Controls.Add(btnNo); pU.Controls.Add(lblNama); pU.Controls.Add(lblTgl); pU.Controls.Add(btnSurvei); pU.Controls.Add(btnKlik); pU.Controls.Add(btnStatus);
+            pU.Controls.Add(btnNo); pU.Controls.Add(lblNama); pU.Controls.Add(lblTgl); pU.Controls.Add(btnSurveiTag); pU.Controls.Add(btnKlik); pU.Controls.Add(btnStatus);
 
-            var pD = new Guna2Panel { Name = "DynDetail", Size = new Size(cardW - 50, 300), Location = new Point(25, 90), BorderRadius = 14, BorderThickness = 1, BorderColor = SystemColors.ControlDark, FillColor = Color.FromArgb(248, 250, 252), Visible = false };
-            BuildDetailSurvei(pD, item, container);
+            // DETAIL LEBIH SEDERHANA MANG (Tinggi dikurangi)
+            var pD = new Guna2Panel { Name = "DynDetail", Size = new Size(cardW - 50, 260), Location = new Point(25, 90), BorderRadius = 14, BorderThickness = 1, BorderColor = SystemColors.ControlDark, FillColor = Color.FromArgb(248, 250, 252), Visible = false };
+            BuildDetailSurvei(pD, item);
 
             Action toggle = () => {
                 this.SuspendLayout();
@@ -125,26 +127,37 @@ namespace KostPakYoyok
             return container;
         }
 
-        private void BuildDetailSurvei(Guna2Panel pD, JToken item, Panel container)
+        private void BuildDetailSurvei(Guna2Panel pD, JToken item)
         {
             var d = item["detail"];
             string idSurvei = item["id"]?.ToString()?.Replace("SRV-", "");
 
-            pD.Controls.Add(new Label { Text = "CATATAN SURVEI", Location = new Point(35, 30), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
-            pD.Controls.Add(new Label { Text = d["catatan"]?.ToString() ?? "-", Location = new Point(33, 60), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
+            // Layout 1 Kolom biar simpel mang!
+            pD.Controls.Add(new Label { Text = "RENCANA WAKTU SURVEI", Location = new Point(35, 30), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
+            pD.Controls.Add(new Label { Text = d["tgl_survei"]?.ToString() ?? "-", Location = new Point(33, 55), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             
-            pD.Controls.Add(new Label { Text = "WAKTU SURVEI", Location = new Point(35, 120), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
-            pD.Controls.Add(new Label { Text = d["tgl_survei"]?.ToString() ?? "-", Location = new Point(33, 150), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
+            pD.Controls.Add(new Label { Text = "CATATAN DARI CALON PENYEWA", Location = new Point(35, 105), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
+            pD.Controls.Add(new Label { Text = d["catatan"]?.ToString() ?? "-", Location = new Point(33, 130), Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
 
             if (item["status"]?.ToString() == "Pending")
             {
-                var btnAccept = new Guna2Button { Text = "Terima Survei", Size = new Size(180, 45), Location = new Point(35, 220), BorderRadius = 14, FillColor = Color.FromArgb(220, 252, 231), ForeColor = Color.LimeGreen, Font = new Font("Segoe UI", 10, FontStyle.Bold), Cursor = Cursors.Hand };
-                var btnReject = new Guna2Button { Text = "Tolak Survei", Size = new Size(180, 45), Location = new Point(230, 220), BorderRadius = 14, FillColor = Color.FromArgb(254, 242, 242), ForeColor = Color.Red, Font = new Font("Segoe UI", 10, FontStyle.Bold), Cursor = Cursors.Hand };
+                var btnAccept = new Guna2Button { Text = "Terima Survei", Size = new Size(160, 40), Location = new Point(35, 190), BorderRadius = 12, FillColor = Color.FromArgb(220, 252, 231), ForeColor = Color.LimeGreen, Font = new Font("Segoe UI", 9, FontStyle.Bold), Cursor = Cursors.Hand };
+                var btnReject = new Guna2Button { Text = "Tolak Survei", Size = new Size(160, 40), Location = new Point(210, 190), BorderRadius = 12, FillColor = Color.FromArgb(254, 242, 242), ForeColor = Color.Red, Font = new Font("Segoe UI", 9, FontStyle.Bold), Cursor = Cursors.Hand };
 
-                btnAccept.Click += async (s, e) => await ActionSurvei(AcceptUrl + idSurvei);
-                btnReject.Click += async (s, e) => await ActionSurvei(RejectUrl + idSurvei);
+                btnAccept.Click += async (s, e) => {
+                    if (MessageBox.Show("Terima jadwal survei ini?", "Konfirmasi", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        await ActionSurvei(AcceptUrl + idSurvei);
+                };
+                btnReject.Click += async (s, e) => {
+                    if (MessageBox.Show("Tolak jadwal survei ini?", "Konfirmasi", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        await ActionSurvei(RejectUrl + idSurvei);
+                };
 
                 pD.Controls.Add(btnAccept); pD.Controls.Add(btnReject);
+            }
+            else
+            {
+                pD.Controls.Add(new Label { Text = "Aksi sudah diproses.", Location = new Point(35, 190), Font = new Font("Segoe UI", 9, FontStyle.Bold | FontStyle.Italic), ForeColor = SystemColors.ControlDark, AutoSize = true });
             }
         }
 
@@ -161,10 +174,7 @@ namespace KostPakYoyok
                         MessageBox.Show("Berhasil memperbarui status survei");
                         await LoadRiwayatSurveiAsync();
                     }
-                    else
-                    {
-                        MessageBox.Show("Gagal: " + await resp.Content.ReadAsStringAsync());
-                    }
+                    else MessageBox.Show("Gagal: " + await resp.Content.ReadAsStringAsync());
                 }
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }

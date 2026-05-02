@@ -83,8 +83,8 @@ namespace KostPakYoyok
             var btnLama = new Guna2Button { Size = new Size(80, 22), Location = new Point(105, 21), BorderRadius = 8, FillColor = SystemColors.Control, ForeColor = Color.FromArgb(26, 18, 101), Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "LAMA" };
             var btnKlik = new Guna2Button { Size = new Size(110, 22), Location = new Point(335, 21), BorderRadius = 8, FillColor = SystemColors.Control, ForeColor = Color.DarkGray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "Klik Detail ▲" };
             
-            // STATUS CHECK-OUT WARNA MERAH MANG!
-            var btnStatus = new Guna2Button { Size = new Size(115, 38), Location = new Point(pU.Width - 145, 33), BorderRadius = 14, FillColor = Color.FromArgb(254, 242, 242), ForeColor = Color.Red, Font = new Font("Segoe UI", 10, FontStyle.Bold), Text = "CHECK-OUT" };
+            // STATUS Check-Out MANG!
+            var btnStatus = new Guna2Button { Size = new Size(115, 38), Location = new Point(pU.Width - 145, 33), BorderRadius = 14, FillColor = Color.FromArgb(254, 242, 242), ForeColor = Color.Red, Font = new Font("Segoe UI", 10, FontStyle.Bold), Text = "Check-Out" };
 
             pU.Controls.Add(btnNo); pU.Controls.Add(lblNama); pU.Controls.Add(lblNIK); pU.Controls.Add(lblTgl); pU.Controls.Add(btnLama); pU.Controls.Add(btnKlik); pU.Controls.Add(btnStatus);
             lblNIK.Location = new Point(lblNama.Right + 10, 58);
@@ -153,7 +153,7 @@ namespace KostPakYoyok
             var p3 = new Guna2Panel { Size = new Size(280, 130), Location = new Point(35, 150), BorderRadius = 14, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             p3.Controls.Add(new Label { Text = "RIWAYAT TAGIHAN", Location = new Point(20, 20), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             bool isLunas = totalBayar >= totalHargaTagihan;
-            p3.Controls.Add(new Label { Text = isLunas ? "✔️ Lunas" : "❌ MASIH HUTANG", Location = new Point(18, 50), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = isLunas ? Color.LimeGreen : Color.Red, AutoSize = true });
+            p3.Controls.Add(new Label { Text = isLunas ? "✔️ Lunas" : "❌ BELUM LUNAS", Location = new Point(18, 50), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = isLunas ? Color.LimeGreen : Color.Red, AutoSize = true });
             p3.Controls.Add(new Label { Text = "TOTAL BIAYA: Rp. " + totalHargaTagihan.ToString("N0", cultureIndo), Location = new Point(20, 95), Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(p3);
 
