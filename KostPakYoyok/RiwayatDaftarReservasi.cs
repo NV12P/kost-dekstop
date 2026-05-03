@@ -49,7 +49,6 @@ namespace KostPakYoyok
 
                     var arr = JArray.Parse(await resp.Content.ReadAsStringAsync());
                     int index = 1;
-
                     var reservasiData = arr.Where(x => x["kategori"]?.ToString() == "booking").ToList();
 
                     foreach (var item in reservasiData)
@@ -69,35 +68,35 @@ namespace KostPakYoyok
 
         private Panel CreateRow(JToken item, int index, int y)
         {
-            var detail = item["detail"];
             DateTime tgl; DateTime.TryParse(item["tanggal"]?.ToString(), out tgl);
+            string namaUser = item["penyewa"]?.ToString() ?? "User";
+            string status = item["status"]?.ToString() ?? "Booking";
 
             int cardW = 1400;
             var container = new Panel { Name = "Entry_" + index, Size = new Size(cardW, 115), BackColor = Color.Transparent };
 
+            // HEADER
             var pU = new Guna2Panel { Name = "DynHeader", Size = new Size(cardW - 20, 105), Location = new Point(10, 0), BorderRadius = 14, FillColor = Color.White, BorderThickness = 1, BorderColor = Color.FromArgb(226, 232, 240), Cursor = Cursors.Hand };
 
-            var btnNo = new Guna2Button { Size = new Size(65, 65), Location = new Point(25, 20), BorderRadius = 14, FillColor = SystemColors.Control, ForeColor = Color.FromArgb(26, 18, 101), Font = new Font("Segoe UI", 18, FontStyle.Bold), Text = index.ToString() };
-            var lblNama = new Label { Text = (item["penyewa"]?.ToString() ?? "User").ToLower(), Location = new Point(105, 48), Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true };
-            var lblTgl = new Label { Text = tgl.ToString("dddd, dd/MM/yyyy", cultureIndo), Location = new Point(195, 23), Font = new Font("Segoe UI Semibold", 9, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true };
-            var btnBooking = new Guna2Button { Size = new Size(80, 22), Location = new Point(105, 21), BorderRadius = 8, FillColor = Color.FromArgb(224, 231, 255), ForeColor = Color.FromArgb(67, 56, 202), Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "BOOKING" };
-            var btnKlik = new Guna2Button { Size = new Size(110, 22), Location = new Point(335, 21), BorderRadius = 8, FillColor = SystemColors.Control, ForeColor = Color.DarkGray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "Klik Detail ▲" };
+            var btnIcon = new Guna2Button { Size = new Size(65, 65), Location = new Point(25, 20), BorderRadius = 14, FillColor = Color.FromArgb(26, 18, 101), ForeColor = Color.White, Font = new Font("Segoe UI", 18, FontStyle.Bold), Text = "R" };
+            var lblNama = new Label { Text = namaUser.ToLower(), Location = new Point(105, 48), Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true };
+            var lblTgl = new Label { Text = tgl.ToString("dddd, dd/MM/yyyy", cultureIndo), Location = new Point(245, 24), Font = new Font("Segoe UI Semibold", 9, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true };
+            var btnBookingTag = new Guna2Button { Size = new Size(110, 22), Location = new Point(105, 22), BorderRadius = 8, FillColor = SystemColors.Control, ForeColor = Color.FromArgb(26, 18, 101), Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "BOOKING" };
+            var btnKlik = new Guna2Button { Size = new Size(110, 22), Location = new Point(410, 22), BorderRadius = 8, FillColor = SystemColors.Control, ForeColor = Color.DarkGray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "Klik Detail ▲" };
             
-            string status = item["status"]?.ToString() ?? "Booking";
-            var btnStatus = new Guna2Button { 
-                Size = new Size(115, 38), 
-                Location = new Point(pU.Width - 145, 33), 
-                BorderRadius = 14, 
-                FillColor = status == "Booking" ? Color.FromArgb(254, 249, 195) : Color.FromArgb(254, 242, 242), 
-                ForeColor = status == "Booking" ? Color.FromArgb(161, 98, 7) : Color.Red, 
-                Font = new Font("Segoe UI", 10, FontStyle.Bold), 
-                Text = status.ToUpper() 
-            };
+            var btnStatus = new Guna2Button { Size = new Size(105, 38), Location = new Point(pU.Width - 130, 33), BorderRadius = 14, Font = new Font("Segoe UI", 10, FontStyle.Bold) };
 
-            pU.Controls.Add(btnNo); pU.Controls.Add(lblNama); pU.Controls.Add(lblTgl); pU.Controls.Add(btnBooking); pU.Controls.Add(btnKlik); pU.Controls.Add(btnStatus);
+            if (status.ToLower() == "booking") {
+                btnStatus.FillColor = Color.FromArgb(219, 234, 254); btnStatus.ForeColor = Color.FromArgb(37, 99, 235); btnStatus.Text = "Booking";
+            } else {
+                btnStatus.FillColor = Color.FromArgb(254, 242, 242); btnStatus.ForeColor = Color.Red; btnStatus.Text = "Cancel";
+            }
 
-            var pD = new Guna2Panel { Name = "DynDetail", Size = new Size(cardW - 50, 320), Location = new Point(25, 90), BorderRadius = 14, BorderThickness = 1, BorderColor = SystemColors.ControlDark, FillColor = Color.FromArgb(248, 250, 252), Visible = false };
-            BuildDetailBooking(pD, item, container);
+            pU.Controls.Add(btnIcon); pU.Controls.Add(lblNama); pU.Controls.Add(lblTgl); pU.Controls.Add(btnBookingTag); pU.Controls.Add(btnKlik); pU.Controls.Add(btnStatus);
+
+            // DETAIL
+            var pD = new Guna2Panel { Name = "DynDetail", Size = new Size(cardW - 50, 280), Location = new Point(25, 95), BorderRadius = 14, BorderThickness = 1, BorderColor = SystemColors.ControlDark, FillColor = Color.FromArgb(248, 250, 252), Visible = false };
+            BuildDetailBooking(pD, item);
 
             Action toggle = () => {
                 this.SuspendLayout();
@@ -124,34 +123,55 @@ namespace KostPakYoyok
             return container;
         }
 
-        private void BuildDetailBooking(Guna2Panel pD, JToken item, Panel container)
+        private void BuildDetailBooking(Guna2Panel pD, JToken item)
         {
             var d = item["detail"];
             string idDetail = item["id"]?.ToString()?.Replace("BKG-", "").Replace("CAN-", "");
+            string durasi = d["durasi"]?.ToString() ?? "1 Bulan";
+            string metode = d["metode"]?.ToString() ?? "TUNAI";
+            string catatan = d["catatan"]?.ToString() ?? "-";
+            string status = item["status"]?.ToString()?.ToLower() ?? "booking";
 
-            pD.Controls.Add(new Label { Text = "KAMAR", Location = new Point(35, 30), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
-            pD.Controls.Add(new Label { Text = item["kamar"]?.ToString() ?? "-", Location = new Point(33, 60), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
+            // Box DURASI
+            var sp1 = new Guna2Panel { Size = new Size(300, 95), Location = new Point(35, 35), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
+            sp1.Controls.Add(new Label { Text = "DURASI SEWA", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
+            sp1.Controls.Add(new Label { Text = durasi, Location = new Point(18, 42), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
+            pD.Controls.Add(sp1);
+
+            // Box METODE
+            var sp2 = new Guna2Panel { Size = new Size(300, 95), Location = new Point(350, 35), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
+            sp2.Controls.Add(new Label { Text = "METODE BAYAR", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
+            sp2.Controls.Add(new Label { Text = metode, Location = new Point(18, 42), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
+            pD.Controls.Add(sp2);
+
+            // Box CATATAN
+            var sp3 = new Guna2Panel { Size = new Size(615, 95), Location = new Point(35, 145), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
+            sp3.Controls.Add(new Label { Text = "CATATAN", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
+            sp3.Controls.Add(new Label { Text = "\"" + catatan + "\"", Location = new Point(18, 42), Font = new Font("Segoe UI Semibold", 10, FontStyle.Bold | FontStyle.Italic), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
+            pD.Controls.Add(sp3);
+
+            // Box AKSI
+            var sp4 = new Guna2Panel { Size = new Size(615, 205), Location = new Point(685, 35), BorderRadius = 14, FillColor = Color.FromArgb(243, 245, 251), BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             
-            pD.Controls.Add(new Label { Text = "DURASI & METODE", Location = new Point(35, 120), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
-            pD.Controls.Add(new Label { Text = (d["durasi"]?.ToString() ?? "-") + " (" + (d["metode"]?.ToString() ?? "-") + ")", Location = new Point(33, 150), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
-
-            pD.Controls.Add(new Label { Text = "CATATAN", Location = new Point(35, 200), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
-            pD.Controls.Add(new Label { Text = d["catatan"]?.ToString() ?? "-", Location = new Point(33, 230), Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
-
-            if (item["status"]?.ToString() == "Booking")
+            if (status == "booking")
             {
-                var btnReject = new Guna2Button { Text = "Tolak Reservasi", Size = new Size(180, 45), Location = new Point(pD.Width - 215, 240), BorderRadius = 14, FillColor = Color.FromArgb(254, 242, 242), ForeColor = Color.Red, Font = new Font("Segoe UI", 10, FontStyle.Bold), Cursor = Cursors.Hand };
-                btnReject.Click += async (s, e) => {
-                    if (MessageBox.Show("Tolak reservasi ini?", "Konfirmasi", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        await RejectBooking(RejectUrl + idDetail);
-                    }
-                };
-                pD.Controls.Add(btnReject);
+                var btnAccept = new Guna2Button { Text = "ACCEPT", Size = new Size(550, 60), Location = new Point(32, 35), BorderRadius = 14, FillColor = Color.FromArgb(26, 18, 101), ForeColor = Color.White, Font = new Font("Segoe UI", 11, FontStyle.Bold), Cursor = Cursors.Hand };
+                var btnReject = new Guna2Button { Text = "CANCEL", Size = new Size(550, 60), Location = new Point(32, 110), BorderRadius = 14, FillColor = Color.FromArgb(254, 242, 242), BorderColor = Color.MistyRose, BorderThickness = 1, ForeColor = Color.Red, Font = new Font("Segoe UI", 11, FontStyle.Bold), Cursor = Cursors.Hand };
+                btnReject.HoverState.FillColor = Color.Red; btnReject.HoverState.ForeColor = Color.FromArgb(254, 242, 242);
+
+                btnAccept.Click += (s, e) => { MessageBox.Show("Silakan daftarkan penyewa secara manual melalui halaman 'Penyewa' dengan data booking ini.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); };
+                btnReject.Click += async (s, e) => { if (MessageBox.Show("Tolak reservasi ini?", "Konfirmasi", MessageBoxButtons.YesNo) == DialogResult.Yes) await ActionReject(RejectUrl + idDetail); };
+                sp4.Controls.Add(btnAccept); sp4.Controls.Add(btnReject);
             }
+            else
+            {
+                var lblMsg = new Label { Text = "NO ACTION AVAILABLE", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = SystemColors.ControlDark, AutoSize = false, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter };
+                sp4.Controls.Add(lblMsg);
+            }
+            pD.Controls.Add(sp4);
         }
 
-        private async Task RejectBooking(string url)
+        private async Task ActionReject(string url)
         {
             try
             {
@@ -159,15 +179,8 @@ namespace KostPakYoyok
                 {
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
                     var resp = await client.PutAsync(url, null);
-                    if (resp.IsSuccessStatusCode)
-                    {
-                        MessageBox.Show("Reservasi berhasil ditolak");
-                        await LoadRiwayatReservasiAsync();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Gagal: " + await resp.Content.ReadAsStringAsync());
-                    }
+                    if (resp.IsSuccessStatusCode) { MessageBox.Show("Reservasi berhasil ditolak"); await LoadRiwayatReservasiAsync(); }
+                    else MessageBox.Show("Gagal: " + await resp.Content.ReadAsStringAsync());
                 }
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
@@ -182,11 +195,7 @@ namespace KostPakYoyok
             int cX = (this.ClientSize.Width - cardW) / 2;
             if (cX < 20) cX = 20;
             var entries = this.Controls.Cast<Control>().Where(x => x.Name != null && x.Name.StartsWith("Entry_")).OrderBy(x => int.Parse(x.Name.Replace("Entry_", ""))).ToList();
-            foreach (Control c in entries)
-            {
-                c.Location = new Point(cX, curY);
-                curY += c.Height + 15;
-            }
+            foreach (Control c in entries) { c.Location = new Point(cX, curY); curY += c.Height + 15; }
             this.AutoScrollPosition = new Point(Math.Abs(scrollPos.X), Math.Abs(scrollPos.Y));
             this.ResumeLayout(false);
         }
