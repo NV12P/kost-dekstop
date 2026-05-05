@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,14 +6,18 @@ using System.Threading.Tasks;
 
 namespace KostPakYoyok
 {
-
+    // =====================================================
+    // SESSION MODEL
+    // =====================================================
     public static class Session
     {
         public static string Token;
-        // Simpan nama user untuk ditampilkan di UI setelah login
         public static string Nama;
     }
 
+    // =====================================================
+    // DATA MODELS
+    // =====================================================
     class SewaAktif
     {
         public int bulan { get; set; }

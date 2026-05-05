@@ -20,6 +20,9 @@ namespace KostPakYoyok
             InitializeComponent();
         }
 
+        // =====================================================
+        // INITIALIZE & EVENTS
+        // =====================================================
         private async void DashboardControl_Load(object sender, EventArgs e)
         {
             await LoadDashboardAsync();
@@ -30,6 +33,9 @@ namespace KostPakYoyok
             await LoadDashboardAsync();
         }
 
+        // =====================================================
+        // API DATA LOADING
+        // =====================================================
         private async Task LoadDashboardAsync()
         {
             btnResultTahun.Enabled = false;
@@ -75,6 +81,9 @@ namespace KostPakYoyok
                     int maxVal = monthValues.Max();
                     if (maxVal < 5) maxVal = 5;
 
+                    // =====================================================
+                    // CHART STYLING
+                    // =====================================================
                     series.ChartType = SeriesChartType.Spline;
                     series.Color = System.Drawing.Color.FromArgb(26, 18, 101); 
                     series.BorderWidth = 1; 
@@ -113,6 +122,9 @@ namespace KostPakYoyok
                     chart1.BackColor = System.Drawing.Color.White;
                     area.BackColor = System.Drawing.Color.White;
                     
+                    // =====================================================
+                    // SUMMARY CARDS
+                    // =====================================================
                     if (res != null) {
                         labelPemasukan.Text = "Rp " + res.pemasukan.ToString("N0", CultureInfo.InvariantCulture);
                         labelPengeluaran.Text = "Rp " + res.pengeluaran.ToString("N0", CultureInfo.InvariantCulture);

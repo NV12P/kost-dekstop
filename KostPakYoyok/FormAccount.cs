@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,40 +15,46 @@ namespace KostPakYoyok
         private LoginControl loginControl;
         private RegisterControl registerControl;
 
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public FormAccount()
         {
             InitializeComponent();
         }
 
-        private void FormAccount_Load(object sender, EventArgs e)
-        {
-            // Inisialisasi controls SEKALI SAJA
-            loginControl = new LoginControl();
-            registerControl = new RegisterControl();
-
-            // Setup event handlers
-            loginControl.GoToRegisterClicked += LoginControl_GoToRegisterClicked;
-            registerControl.GoToLoginClicked += RegisterControl_GoToLoginClicked;
-
-            // Tampilkan login pertama
-            ShowPage(loginControl); // JANGAN buat instance baru!
-        }
-
-        private void LoginControl_GoToRegisterClicked(object sender, EventArgs e)
-        {
-            ShowPage(registerControl); // Gunakan instance yang sudah ada
-        }
-
-        private void RegisterControl_GoToLoginClicked(object sender, EventArgs e)
-        {
-            ShowPage(loginControl); // Gunakan instance yang sudah ada
-        }
-
+        // =====================================================
+        // UI LOGIC
+        // =====================================================
         private void ShowPage(UserControl page)
         {
             panelKonten.Controls.Clear();
             page.Dock = DockStyle.Fill;
             panelKonten.Controls.Add(page);
+        }
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
+        private void FormAccount_Load(object sender, EventArgs e)
+        {
+            loginControl = new LoginControl();
+            registerControl = new RegisterControl();
+
+            loginControl.GoToRegisterClicked += LoginControl_GoToRegisterClicked;
+            registerControl.GoToLoginClicked += RegisterControl_GoToLoginClicked;
+
+            ShowPage(loginControl);
+        }
+
+        private void LoginControl_GoToRegisterClicked(object sender, EventArgs e)
+        {
+            ShowPage(registerControl);
+        }
+
+        private void RegisterControl_GoToLoginClicked(object sender, EventArgs e)
+        {
+            ShowPage(loginControl);
         }
     }
 }

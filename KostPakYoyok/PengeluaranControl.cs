@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +12,9 @@ namespace KostPakYoyok
 {
     public partial class PengeluaranControl : UserControl
     {
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public PengeluaranControl()
         {
             InitializeComponent();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,24 +12,48 @@ namespace KostPakYoyok
 {
     public partial class FormUtama : Form
     {
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public FormUtama()
         {
             InitializeComponent();
         }
 
-
-        private void FormUtama_Load(object sender, EventArgs e)
-        {
-            ShowPage(new DashboardControl());
-        }
-
+        // =====================================================
+        // UI LOGIC
+        // =====================================================
         private void ShowPage(UserControl page)
         {
             panelContent.Controls.Clear();
-
             page.Dock = DockStyle.Fill;
-
             panelContent.Controls.Add(page);
+        }
+
+        // =====================================================
+        // PUBLIC HELPERS
+        // =====================================================
+        public void SetUserName(string nama)
+        {
+            if (string.IsNullOrEmpty(nama))
+                return;
+
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => labelNama.Text = nama));
+            }
+            else
+            {
+                labelNama.Text = nama;
+            }
+        }
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
+        private void FormUtama_Load(object sender, EventArgs e)
+        {
+            ShowPage(new DashboardControl());
         }
 
         private void btnBeranda_Click(object sender, EventArgs e)
@@ -71,9 +95,7 @@ namespace KostPakYoyok
 
             if (e.ClickedItem.Text == "Profil")
             {
-                // Cari form utama sebagai parent
                 FormUtama parentForm = this.FindForm() as FormUtama;
-
                 if (parentForm == null) return;
 
                 Form formbackground = new Form();
@@ -81,7 +103,6 @@ namespace KostPakYoyok
                 {
                     using (FormProfil profileForm = new FormProfil())
                     {
-                        // Atur background overlay HANYA seukuran parent form
                         formbackground.StartPosition = FormStartPosition.Manual;
                         formbackground.FormBorderStyle = FormBorderStyle.None;
                         formbackground.Opacity = 0.30d;
@@ -93,13 +114,11 @@ namespace KostPakYoyok
 
                         formbackground.Show();
 
-                        // Atur posisi form profile (CUSTOM lokasi)
                         profileForm.StartPosition = FormStartPosition.Manual;
                         profileForm.Owner = formbackground;
 
-                        // Posisi di tengah form utama
                         profileForm.Location = new Point(
-                            parentForm.Location.X + 900, // Sesuaikan dengan lebar form utama
+                            parentForm.Location.X + 900, 
                             parentForm.Location.Y + 120
                         );
 
@@ -117,23 +136,6 @@ namespace KostPakYoyok
                     if (formbackground != null && !formbackground.IsDisposed)
                         formbackground.Dispose();
                 }
-            }
-        }
-
-        // Public helper agar login control dapat mengatur nama yang tampil
-        public void SetUserName(string nama)
-        {
-            if (string.IsNullOrEmpty(nama))
-                return;
-
-            // pastikan update di UI thread
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new Action(() => labelNama.Text = nama));
-            }
-            else
-            {
-                labelNama.Text = nama;
             }
         }
     }

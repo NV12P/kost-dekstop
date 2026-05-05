@@ -34,6 +34,9 @@ namespace KostPakYoyok
             this.SizeChanged += (s, e) => ReLayoutAll(); 
         }
 
+        // =====================================================
+        // API DATA LOADING
+        // =====================================================
         private async Task LoadRiwayatLamaAsync()
         {
             try {
@@ -48,8 +51,6 @@ namespace KostPakYoyok
 
                     var arr = JArray.Parse(await resp.Content.ReadAsStringAsync());
                     int index = 1;
-
-                    // FILTER KHUSUS PENGHUNI LAMA (KATEGORI: LAMA) MANG!
                     var lamaData = arr.Where(x => x["kategori"]?.ToString() == "lama").ToList();
 
                     foreach (var item in lamaData) {
@@ -66,6 +67,9 @@ namespace KostPakYoyok
             }
         }
 
+        // =====================================================
+        // ROW CREATION (LIST)
+        // =====================================================
         private Panel CreateRow(JToken item, int index, int y)
         {
             var detail = item["detail"];
@@ -83,7 +87,6 @@ namespace KostPakYoyok
             var btnLama = new Guna2Button { Size = new Size(80, 22), Location = new Point(105, 21), BorderRadius = 8, FillColor = SystemColors.Control, ForeColor = Color.FromArgb(26, 18, 101), Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "LAMA" };
             var btnKlik = new Guna2Button { Size = new Size(110, 22), Location = new Point(335, 21), BorderRadius = 8, FillColor = SystemColors.Control, ForeColor = Color.DarkGray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Text = "Klik Detail ▲" };
             
-            // STATUS Check-Out MANG!
             var btnStatus = new Guna2Button { Size = new Size(115, 38), Location = new Point(pU.Width - 145, 33), BorderRadius = 14, FillColor = Color.FromArgb(254, 242, 242), ForeColor = Color.Red, Font = new Font("Segoe UI", 10, FontStyle.Bold), Text = "Check-Out" };
 
             pU.Controls.Add(btnNo); pU.Controls.Add(lblNama); pU.Controls.Add(lblNIK); pU.Controls.Add(lblTgl); pU.Controls.Add(btnLama); pU.Controls.Add(btnKlik); pU.Controls.Add(btnStatus);
@@ -120,12 +123,14 @@ namespace KostPakYoyok
             return container;
         }
 
+        // =====================================================
+        // DETAIL PANEL BUILDING
+        // =====================================================
         private void BuildDetailInner(Guna2Panel pD, JToken item, DateTime start, Panel container)
         {
             var d = item["detail"];
             var cicilanArr = d["cicilan"] as JArray ?? new JArray();
             
-            // Hitung total harga & bayar
             long hargaPerBulan = 400000;
             string durasiText = d["durasi"]?.ToString() ?? "1 Bulan";
             int totalBulan = int.Parse(new string(durasiText.Where(char.IsDigit).ToArray()) ?? "1");
@@ -137,7 +142,6 @@ namespace KostPakYoyok
                 totalBayar += long.TryParse(nomStr, out long n) ? n : 0;
             }
 
-            // PANEL LOKASI KAMAR
             var p1 = new Guna2Panel { Size = new Size(580, 95), Location = new Point(35, 40), BorderRadius = 14, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             var btnHouse = new Guna2Button { Size = new Size(65, 65), Location = new Point(15, 15), BorderRadius = 14, FillColor = Color.FromArgb(26, 18, 101) };
             try {
@@ -149,7 +153,6 @@ namespace KostPakYoyok
             p1.Controls.Add(new Label { Text = (item["kamar"]?.ToString() ?? "KAMAR").ToUpper(), Location = new Point(93, 45), Font = new Font("Segoe UI", 16, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(p1);
 
-            // PANEL STATUS
             var p3 = new Guna2Panel { Size = new Size(280, 130), Location = new Point(35, 150), BorderRadius = 14, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             p3.Controls.Add(new Label { Text = "RIWAYAT TAGIHAN", Location = new Point(20, 20), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             bool isLunas = totalBayar >= totalHargaTagihan;
@@ -202,6 +205,9 @@ namespace KostPakYoyok
             UpdateDHeight(pD);
         }
 
+        // =====================================================
+        // CICILAN CARDS & IMAGE LOADING
+        // =====================================================
         private Guna2Panel CreateCicilanCard(JToken d, int y, int w, Panel container, Guna2Panel pD, int idx)
         {
             var p = new Guna2Panel { Size = new Size(w, 110), Location = new Point(660, y), BorderRadius = 14, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
@@ -260,6 +266,9 @@ namespace KostPakYoyok
             return p;
         }
 
+        // =====================================================
+        // LAYOUT HELPERS
+        // =====================================================
         private void UpdateDHeight(Guna2Panel d) {
             int max = 450;
             foreach (Control c in d.Controls) if (c.Visible && c.Bottom > max) max = c.Bottom;

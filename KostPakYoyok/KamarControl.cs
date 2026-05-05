@@ -15,6 +15,9 @@ namespace KostPakYoyok
     {
         private const string KamarApiUrl = "https://kost.arcv.web.id/api/kamar";
 
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public KamarControl()
         {
             InitializeComponent();
@@ -22,6 +25,9 @@ namespace KostPakYoyok
             this.Load += async (s, e) => await LoadKamarAsync();
         }
 
+        // =====================================================
+        // UI LOGIC
+        // =====================================================
         private async Task OnTambahClickedAsync()
         {
             var parentForm = this.FindForm() as FormUtama;
@@ -38,6 +44,9 @@ namespace KostPakYoyok
             bg.Dispose();
         }
 
+        // =====================================================
+        // DATA LOADING
+        // =====================================================
         private async Task LoadKamarAsync()
         {
             try
@@ -56,7 +65,6 @@ namespace KostPakYoyok
                     var json = await response.Content.ReadAsStringAsync();
                     var token = JToken.Parse(json);
                     
-                    // Sesuai JSON abang, datanya ada di dalam field "data"
                     JArray arr = (token["data"] != null) ? (JArray)token["data"] : (token.Type == JTokenType.Array ? (JArray)token : new JArray());
 
                     int columns = 5, gapX = 20, gapY = 30, marginLeft = 24, marginTop = 65;
@@ -78,12 +86,14 @@ namespace KostPakYoyok
             catch { }
         }
 
+        // =====================================================
+        // UI HELPERS
+        // =====================================================
         private Guna2ShadowPanel CreateKamarPanel(JToken item, int index, int cardWidth, int cardHeight)
         {
             int padding = 18;
             var panel = new Guna2ShadowPanel { Size = new Size(cardWidth, 580), Radius = 12, FillColor = Color.White, ShadowColor = Color.LightGray, ShadowDepth = 10 };
 
-            // ================= FOTO (Sesuai JSON: foto_kamar) =================
             var picture = new Guna2PictureBox { Size = new Size(cardWidth - padding * 2, 140), Location = new Point(padding, padding), SizeMode = PictureBoxSizeMode.StretchImage, BorderRadius = 10 };
             var fotoRaw = item["foto_kamar"]?.ToString();
             var fotoUrl = ResolveImageUrl(fotoRaw);
@@ -93,7 +103,6 @@ namespace KostPakYoyok
                 Task.Run(async () => {
                     try {
                         using (var wc = new WebClient()) {
-                            // Pakai User-Agent biar gak diblokir server mang
                             wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
                             byte[] data = await wc.DownloadDataTaskAsync(new Uri(fotoUrl));
                             using (var ms = new System.IO.MemoryStream(data)) {
@@ -107,22 +116,18 @@ namespace KostPakYoyok
             panel.Controls.Add(picture);
             int y = picture.Bottom + 12;
 
-            // ================= NAMA (Sesuai JSON: nomor_kamar) =================
             var lblNama = new Label { Text = (string)item["nomor_kamar"] ?? ("Kamar " + (index + 1)), Font = new Font("Segoe UI Semibold", 13, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), Location = new Point(padding, y), AutoSize = true };
             panel.Controls.Add(lblNama);
             y = lblNama.Bottom + 5;
 
-            // ================= STATUS (Sesuai JSON: status_kamar) =================
             var statusVal = item["status_kamar"]?.ToString().ToLower() ?? "tersedia";
             bool isDisewa = statusVal == "disewa" || statusVal == "terisi";
             var lblStatus = new Label { Location = new Point(padding, y), AutoSize = true, Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = isDisewa ? Color.Red : Color.LimeGreen, Text = isDisewa ? "Status - Disewa" : "Status - Tersedia" };
             panel.Controls.Add(lblStatus);
             y = lblStatus.Bottom + 15;
 
-            // ================= FASILITAS =================
             var fasilitasList = item["fasilitas"] as JArray;
             if (fasilitasList != null) {
-                // 1. Label Fasilitas Kamar mang
                 var kFas = fasilitasList.Where(f => (string)f["tipe"] == "kamar");
                 if (kFas.Any()) {
                     var lblKamarTitle = new Label { Text = "Fasilitas Kamar :", Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.DimGray, Location = new Point(padding, y), AutoSize = true };
@@ -142,7 +147,6 @@ namespace KostPakYoyok
                     y += 8;
                 }
 
-                // 2. Label Fasilitas Bersama mang
                 var bFas = fasilitasList.Where(f => (string)f["tipe"] == "bersama");
                 if (bFas.Any()) {
                     var lblBersamaTitle = new Label { Text = "Fasilitas Bersama :", Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.DimGray, Location = new Point(padding, y), AutoSize = true };
@@ -162,12 +166,10 @@ namespace KostPakYoyok
                 }
             }
 
-            // ================= HARGA (Sesuai JSON: harga_kamar_perbulan) =================
             y = 480; 
             var lblHarga = new Label { Location = new Point(padding, y), AutoSize = true, Font = new Font("Segoe UI", 13, FontStyle.Bold), ForeColor = Color.Green, Text = "Rp. " + (long.TryParse(item["harga_kamar_perbulan"]?.ToString(), out long h) ? h.ToString("N0").Replace(",", ".") : "0") };
             panel.Controls.Add(lblHarga);
 
-            // ================= TOMBOL EDIT =================
             var btnEdit = new Guna2Button { Size = new Size(cardWidth - padding * 2, 38), Location = new Point(padding, 525), Text = "Edit", BorderRadius = 12, FillColor = Color.FromArgb(26, 18, 101), ForeColor = Color.White, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
             btnEdit.Click += async (s, e) => {
                 var parentForm = this.FindForm() as FormUtama;
@@ -188,18 +190,19 @@ namespace KostPakYoyok
             if (string.IsNullOrWhiteSpace(path)) return null;
             string p = path.Trim();
             
-            // Kalau API sudah ngasih URL lengkap (http/https), jangan dipotong lagi mang!
             if (p.StartsWith("http", StringComparison.OrdinalIgnoreCase)) {
-                // Pastikan alamatnya HTTPS kalau perlu mang
                 return p.Replace("http://", "https://");
             }
             
-            // Kalau cuma path relatif (misal: storage/foto_kamar/xxx.jpg)
             string cleanPath = p.Replace("\\", "/").TrimStart('/');
             return "https://kost.arcv.web.id/" + cleanPath;
         }
 
         private Image TryGetImageFromResources(string p) => null;
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
         private void btnTambah_Click(object sender, EventArgs e) => _ = OnTambahClickedAsync();
         private void btnEditKamar_Click(object sender, EventArgs e) => _ = LoadKamarAsync();
     }

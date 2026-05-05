@@ -16,6 +16,9 @@ namespace KostPakYoyok
         private int? editId;
         private string selectedFotoPath = ""; 
 
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public FormEditKamar()
         {
             InitializeComponent();
@@ -33,21 +36,17 @@ namespace KostPakYoyok
         {
             if (item == null) return;
             
-            // Simpan ID Kamar mang
             editId = item["id_kamar"]?.ToObject<int?>();
             
-            // Tampilkan nomor kamar di textbox
             textNomorKamar.Text = item["nomor_kamar"]?.ToString() ?? "";
             label1.Text = $"Edit {textNomorKamar.Text}";
 
-            // Format Harga
             var rawHarga = item["harga_kamar_perbulan"]?.ToString() ?? "0";
             if (long.TryParse(rawHarga, out long hrg))
             {
                 textHarga.Text = "Rp. " + hrg.ToString("N0").Replace(",", ".");
             }
 
-            // Fasilitas
             var fasilitas = item["fasilitas"] as JArray;
             if (fasilitas != null)
             {
@@ -58,35 +57,9 @@ namespace KostPakYoyok
             }
         }
 
-        private void btnFotoKamar_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.Title = "Pilih Foto Kamar Baru";
-                ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.webp";
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    selectedFotoPath = ofd.FileName;
-                    btnHapusFoto.Visible = true;
-                    btnFotoKamar.Width = 340; 
-                    btnFotoKamar.Text = System.IO.Path.GetFileName(selectedFotoPath);
-                }
-            }
-        }
-
-        private void btnHapusFoto_Click(object sender, EventArgs e)
-        {
-            selectedFotoPath = "";
-            btnHapusFoto.Visible = false;
-            btnFotoKamar.Width = 385; 
-            btnFotoKamar.Text = "Pilih Foto";
-        }
-
-        private void btnSimpan_Click(object sender, EventArgs e)
-        {
-            _ = SaveEditAsync();
-        }
-
+        // =====================================================
+        // API METHODS
+        // =====================================================
         private async Task SaveEditAsync()
         {
             if (!editId.HasValue) return;
@@ -114,24 +87,20 @@ namespace KostPakYoyok
 
                     var content = new MultipartFormDataContent();
                     
-                    // Laravel Method Spoofing & Data Utama mang!
                     content.Add(new StringContent("PUT"), "_method");
                     content.Add(new StringContent(nomor), "nomor_kamar");
                     content.Add(new StringContent(cleanedHarga), "harga_kamar_perbulan");
 
-                    // Fasilitas Kamar (Pecah satu-satu mang!)
                     var fasKamar = textFasilitasKamar.Text.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
                     foreach (var f in fasKamar) {
                         content.Add(new StringContent(f), "fasilitas_kamar[]");
                     }
 
-                    // Fasilitas Bersama
                     var fasBersama = textFasilitasBersama.Text.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
                     foreach (var f in fasBersama) {
                         content.Add(new StringContent(f), "fasilitas_bersama[]");
                     }
 
-                    // Upload Foto mang
                     if (!string.IsNullOrWhiteSpace(selectedFotoPath) && System.IO.File.Exists(selectedFotoPath))
                     {
                         var bytes = System.IO.File.ReadAllBytes(selectedFotoPath);
@@ -142,7 +111,6 @@ namespace KostPakYoyok
                         content.Add(fileContent, "foto_kamar", System.IO.Path.GetFileName(selectedFotoPath));
                     }
 
-                    // KIRIM PAKE POST MANG (Buat Multipart PUT di Laravel)
                     var resp = await client.PostAsync($"{KamarApiUrl}/{editId.Value}", content);
                     var respStr = await resp.Content.ReadAsStringAsync();
 
@@ -167,6 +135,38 @@ namespace KostPakYoyok
                 btnSimpan.Enabled = true;
                 Cursor.Current = prevCursor;
             }
+        }
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
+        private void btnFotoKamar_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Pilih Foto Kamar Baru";
+                ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.webp";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    selectedFotoPath = ofd.FileName;
+                    btnHapusFoto.Visible = true;
+                    btnFotoKamar.Width = 340; 
+                    btnFotoKamar.Text = System.IO.Path.GetFileName(selectedFotoPath);
+                }
+            }
+        }
+
+        private void btnHapusFoto_Click(object sender, EventArgs e)
+        {
+            selectedFotoPath = "";
+            btnHapusFoto.Visible = false;
+            btnFotoKamar.Width = 385; 
+            btnFotoKamar.Text = "Pilih Foto";
+        }
+
+        private void btnSimpan_Click(object sender, EventArgs e)
+        {
+            _ = SaveEditAsync();
         }
 
         private void textHarga_TextChanged(object sender, EventArgs e)

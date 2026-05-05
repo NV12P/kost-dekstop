@@ -5,15 +5,44 @@ namespace KostPakYoyok
 {
     public partial class FormPenyewa : Form
     {
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public FormPenyewa()
         {
             InitializeComponent();
             btnTambah.Click += BtnTambah_Click;
         }
 
+        // =====================================================
+        // PUBLIC PROPERTIES
+        // =====================================================
+        public string Nama => textNama.Text;
+        public string NIK => textNIK.Text;
+        public string NomorTelepon => textNomorTelepon.Text;
+        public int Bulan
+        {
+            get
+            {
+                int.TryParse(textBulanSewa.Text, out int b);
+                return b;
+            }
+        }
+        public string Catatan => textCatatan.Text;
+        public string MetodePembayaran
+        {
+            get
+            {
+                return comboMetodePembayaran.SelectedItem?.ToString()?.ToLower() ?? "tunai";
+            }
+        }
+        public DateTime TanggalMulai => dateMulaiSewa.Value;
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
         private void BtnTambah_Click(object sender, EventArgs e)
         {
-            // VALIDASI
             if (string.IsNullOrWhiteSpace(textNama.Text))
             {
                 MessageBox.Show("Nama penyewa harus diisi!");
@@ -44,39 +73,9 @@ namespace KostPakYoyok
                 return;
             }
 
-            // RETURN OK ke PenyewaControl
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
-
-        // ================== PUBLIC DATA ==================
-
-        public string Nama => textNama.Text;
-
-        public string NIK => textNIK.Text;
-
-        public string NomorTelepon => textNomorTelepon.Text;
-
-        public int Bulan
-        {
-            get
-            {
-                int.TryParse(textBulanSewa.Text, out int b);
-                return b;
-            }
-        }
-
-        public string Catatan => textCatatan.Text;
-
-        public string MetodePembayaran
-        {
-            get
-            {
-                return comboMetodePembayaran.SelectedItem?.ToString()?.ToLower() ?? "tunai";
-            }
-        }
-
-        public DateTime TanggalMulai => dateMulaiSewa.Value;
 
         private void textNIK_TextChanged(object sender, EventArgs e)
         {

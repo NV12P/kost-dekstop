@@ -34,6 +34,9 @@ namespace KostPakYoyok
             this.SizeChanged += (s, e) => ReLayoutAll();
         }
 
+        // =====================================================
+        // API DATA LOADING
+        // =====================================================
         private async Task LoadRiwayatSurveiAsync()
         {
             try
@@ -67,6 +70,9 @@ namespace KostPakYoyok
             }
         }
 
+        // =====================================================
+        // ROW CREATION (LIST)
+        // =====================================================
         private Panel CreateRow(JToken item, int index, int y)
         {
             DateTime tgl; DateTime.TryParse(item["tanggal"]?.ToString(), out tgl);
@@ -76,7 +82,6 @@ namespace KostPakYoyok
             int cardW = 1400;
             var container = new Panel { Name = "Entry_" + index, Size = new Size(cardW, 115), BackColor = Color.Transparent };
 
-            // HEADER
             var pU = new Guna2Panel { Name = "DynHeader", Size = new Size(cardW - 20, 105), Location = new Point(10, 0), BorderRadius = 14, FillColor = Color.White, BorderThickness = 1, BorderColor = Color.FromArgb(226, 232, 240) };
             
             bool isFinish = status.ToLower() == "finish";
@@ -100,7 +105,6 @@ namespace KostPakYoyok
 
             pU.Controls.Add(btnIcon); pU.Controls.Add(lblNama); pU.Controls.Add(lblTgl); pU.Controls.Add(btnSurveiTag); pU.Controls.Add(btnKlik); pU.Controls.Add(btnStatus);
 
-            // DETAIL
             var pD = new Guna2Panel { Name = "DynDetail", Size = new Size(cardW - 50, 280), Location = new Point(25, 95), BorderRadius = 14, BorderThickness = 1, BorderColor = SystemColors.ControlDark, FillColor = Color.FromArgb(248, 250, 252), Visible = false };
             BuildDetailSurvei(pD, item);
 
@@ -130,6 +134,9 @@ namespace KostPakYoyok
             return container;
         }
 
+        // =====================================================
+        // DETAIL PANEL BUILDING
+        // =====================================================
         private void BuildDetailSurvei(Guna2Panel pD, JToken item)
         {
             var d = item["detail"];
@@ -139,25 +146,21 @@ namespace KostPakYoyok
             string catatan = d["catatan"]?.ToString() ?? "-";
             string status = item["status"]?.ToString()?.ToLower() ?? "pending";
 
-            // BOX PESURVEI (Guna2Panel mang!)
             var sp1 = new Guna2Panel { Size = new Size(300, 95), Location = new Point(35, 35), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             sp1.Controls.Add(new Label { Text = "PESURVEI", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             sp1.Controls.Add(new Label { Text = namaPenyewa, Location = new Point(18, 42), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(sp1);
 
-            // BOX TGL SURVEI
             var sp2 = new Guna2Panel { Size = new Size(300, 95), Location = new Point(350, 35), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             sp2.Controls.Add(new Label { Text = "TGL SURVEI", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             sp2.Controls.Add(new Label { Text = tglSurvei, Location = new Point(18, 42), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(sp2);
 
-            // BOX CATATAN
             var sp3 = new Guna2Panel { Size = new Size(615, 95), Location = new Point(35, 145), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             sp3.Controls.Add(new Label { Text = "CATATAN", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             sp3.Controls.Add(new Label { Text = "\"" + catatan + "\"", Location = new Point(18, 42), Font = new Font("Segoe UI Semibold", 10, FontStyle.Bold | FontStyle.Italic), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(sp3);
 
-            // BOX AKSI
             var sp4 = new Guna2Panel { Size = new Size(615, 205), Location = new Point(685, 35), BorderRadius = 14, FillColor = Color.FromArgb(243, 245, 251), BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             
             if (status == "pending")
@@ -179,6 +182,9 @@ namespace KostPakYoyok
             pD.Controls.Add(sp4);
         }
 
+        // =====================================================
+        // API ACTIONS
+        // =====================================================
         private async Task ActionSurvei(string url)
         {
             try
@@ -194,6 +200,9 @@ namespace KostPakYoyok
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
         }
 
+        // =====================================================
+        // LAYOUT HELPERS
+        // =====================================================
         private void ReLayoutAll()
         {
             this.SuspendLayout();

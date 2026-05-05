@@ -14,6 +14,9 @@ namespace KostPakYoyok
         private const string KeuanganApiUrl = "https://kost.arcv.web.id/api/keuangan";
         private int selectedId = 0;
 
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public KeuanganControl()
         {
             InitializeComponent();
@@ -31,7 +34,6 @@ namespace KostPakYoyok
                 btnEdit.Visible = false;
                 btnTambah.Width = 360;
 
-                // Ini nih mang kabel yang tadi lepas!
                 btnEdit.Click += btnEdit_Click;
 
                 LoadUserControl(new IsiRiwayatPengeluaran());
@@ -48,8 +50,52 @@ namespace KostPakYoyok
             };
         }
 
+        // =====================================================
+        // UI HELPERS
+        // =====================================================
         private string FormatCurrency(long value) => "Rp " + value.ToString("N0");
 
+        private void LoadUserControl(UserControl uc)
+        {
+            panelIsiRiwayat.Controls.Clear();
+            uc.Dock = DockStyle.Fill;
+            panelIsiRiwayat.Controls.Add(uc);
+
+            if (uc is IsiRiwayatPengeluaran riwayat)
+            {
+                riwayat.SelectionChanged += (s, e) =>
+                {
+                    if (riwayat.SelectedKeterangan != null)
+                    {
+                        selectedId = riwayat.SelectedId;
+                        textKeterangan.Text = riwayat.SelectedKeterangan;
+                        
+                        if (long.TryParse(riwayat.SelectedNominal.ToString(), out long n))
+                            textNominal.Text = "Rp. " + string.Format("{0:N0}", n).Replace(",", ".");
+                        else
+                            textNominal.Text = riwayat.SelectedNominal.ToString();
+
+                        btnTambah.Width = 260;
+                        btnEdit.Visible = true;
+                    }
+                    else ResetForm();
+                };
+            }
+            else ResetForm();
+        }
+
+        private void ResetForm()
+        {
+            selectedId = 0;
+            textKeterangan.Clear();
+            textNominal.Clear();
+            btnEdit.Visible = false;
+            btnTambah.Width = 360;
+        }
+
+        // =====================================================
+        // DATA LOADING
+        // =====================================================
         private async Task LoadKeuanganAsync()
         {
             try
@@ -81,45 +127,9 @@ namespace KostPakYoyok
             catch { }
         }
 
-        private void LoadUserControl(UserControl uc)
-        {
-            panelIsiRiwayat.Controls.Clear();
-            uc.Dock = DockStyle.Fill;
-            panelIsiRiwayat.Controls.Add(uc);
-
-            if (uc is IsiRiwayatPengeluaran riwayat)
-            {
-                riwayat.SelectionChanged += (s, e) =>
-                {
-                    if (riwayat.SelectedKeterangan != null)
-                    {
-                        selectedId = riwayat.SelectedId;
-                        textKeterangan.Text = riwayat.SelectedKeterangan;
-                        
-                        // Pas pilih data, format ke Rp. mang
-                        if (long.TryParse(riwayat.SelectedNominal.ToString(), out long n))
-                            textNominal.Text = "Rp. " + string.Format("{0:N0}", n).Replace(",", ".");
-                        else
-                            textNominal.Text = riwayat.SelectedNominal.ToString();
-
-                        btnTambah.Width = 260;
-                        btnEdit.Visible = true;
-                    }
-                    else ResetForm();
-                };
-            }
-            else ResetForm();
-        }
-
-        private void ResetForm()
-        {
-            selectedId = 0;
-            textKeterangan.Clear();
-            textNominal.Clear();
-            btnEdit.Visible = false;
-            btnTambah.Width = 360;
-        }
-
+        // =====================================================
+        // API METHODS
+        // =====================================================
         private async void btnTambah_Click(object sender, EventArgs e)
         {
             string ket = textKeterangan.Text.Trim();
@@ -185,6 +195,9 @@ namespace KostPakYoyok
             finally { btnEdit.Enabled = true; }
         }
 
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
         private void textNominal_TextChanged(object sender, EventArgs e)
         {
             textNominal.TextChanged -= textNominal_TextChanged;

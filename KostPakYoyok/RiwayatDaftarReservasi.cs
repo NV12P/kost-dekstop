@@ -14,6 +14,7 @@ namespace KostPakYoyok
     public partial class RiwayatDaftarReservasi : UserControl
     {
         private const string ApiUrl = "https://kost.arcv.web.id/api/riwayat";
+        private const string AcceptUrl = "https://kost.arcv.web.id/api/penyewa/accept/";
         private const string RejectUrl = "https://kost.arcv.web.id/api/penyewa/reject/";
         private static System.Globalization.CultureInfo cultureIndo = new System.Globalization.CultureInfo("id-ID");
 
@@ -33,6 +34,9 @@ namespace KostPakYoyok
             this.SizeChanged += (s, e) => ReLayoutAll();
         }
 
+        // =====================================================
+        // API DATA LOADING
+        // =====================================================
         private async Task LoadRiwayatReservasiAsync()
         {
             try
@@ -66,6 +70,9 @@ namespace KostPakYoyok
             }
         }
 
+        // =====================================================
+        // ROW CREATION (LIST)
+        // =====================================================
         private Panel CreateRow(JToken item, int index, int y)
         {
             DateTime tgl; DateTime.TryParse(item["tanggal"]?.ToString(), out tgl);
@@ -75,7 +82,6 @@ namespace KostPakYoyok
             int cardW = 1400;
             var container = new Panel { Name = "Entry_" + index, Size = new Size(cardW, 115), BackColor = Color.Transparent };
 
-            // HEADER
             var pU = new Guna2Panel { Name = "DynHeader", Size = new Size(cardW - 20, 105), Location = new Point(10, 0), BorderRadius = 14, FillColor = Color.White, BorderThickness = 1, BorderColor = Color.FromArgb(226, 232, 240), Cursor = Cursors.Hand };
 
             var btnIcon = new Guna2Button { Size = new Size(65, 65), Location = new Point(25, 20), BorderRadius = 14, FillColor = Color.FromArgb(26, 18, 101), ForeColor = Color.White, Font = new Font("Segoe UI", 18, FontStyle.Bold), Text = "R" };
@@ -94,7 +100,6 @@ namespace KostPakYoyok
 
             pU.Controls.Add(btnIcon); pU.Controls.Add(lblNama); pU.Controls.Add(lblTgl); pU.Controls.Add(btnBookingTag); pU.Controls.Add(btnKlik); pU.Controls.Add(btnStatus);
 
-            // DETAIL
             var pD = new Guna2Panel { Name = "DynDetail", Size = new Size(cardW - 50, 280), Location = new Point(25, 95), BorderRadius = 14, BorderThickness = 1, BorderColor = SystemColors.ControlDark, FillColor = Color.FromArgb(248, 250, 252), Visible = false };
             BuildDetailBooking(pD, item);
 
@@ -123,6 +128,9 @@ namespace KostPakYoyok
             return container;
         }
 
+        // =====================================================
+        // DETAIL PANEL BUILDING
+        // =====================================================
         private void BuildDetailBooking(Guna2Panel pD, JToken item)
         {
             var d = item["detail"];
@@ -132,25 +140,21 @@ namespace KostPakYoyok
             string catatan = d["catatan"]?.ToString() ?? "-";
             string status = item["status"]?.ToString()?.ToLower() ?? "booking";
 
-            // Box DURASI
             var sp1 = new Guna2Panel { Size = new Size(300, 95), Location = new Point(35, 35), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             sp1.Controls.Add(new Label { Text = "DURASI SEWA", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             sp1.Controls.Add(new Label { Text = durasi, Location = new Point(18, 42), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(sp1);
 
-            // Box METODE
             var sp2 = new Guna2Panel { Size = new Size(300, 95), Location = new Point(350, 35), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             sp2.Controls.Add(new Label { Text = "METODE BAYAR", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             sp2.Controls.Add(new Label { Text = metode, Location = new Point(18, 42), Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(sp2);
 
-            // Box CATATAN
             var sp3 = new Guna2Panel { Size = new Size(615, 95), Location = new Point(35, 145), BorderRadius = 10, FillColor = Color.White, BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             sp3.Controls.Add(new Label { Text = "CATATAN", Location = new Point(20, 15), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = SystemColors.ControlDarkDark, AutoSize = true });
             sp3.Controls.Add(new Label { Text = "\"" + catatan + "\"", Location = new Point(18, 42), Font = new Font("Segoe UI Semibold", 10, FontStyle.Bold | FontStyle.Italic), ForeColor = Color.FromArgb(26, 18, 101), AutoSize = true });
             pD.Controls.Add(sp3);
 
-            // Box AKSI
             var sp4 = new Guna2Panel { Size = new Size(615, 205), Location = new Point(685, 35), BorderRadius = 14, FillColor = Color.FromArgb(243, 245, 251), BorderColor = Color.FromArgb(226, 232, 240), BorderThickness = 1 };
             
             if (status == "booking")
@@ -159,8 +163,14 @@ namespace KostPakYoyok
                 var btnReject = new Guna2Button { Text = "CANCEL", Size = new Size(550, 60), Location = new Point(32, 110), BorderRadius = 14, FillColor = Color.FromArgb(254, 242, 242), BorderColor = Color.MistyRose, BorderThickness = 1, ForeColor = Color.Red, Font = new Font("Segoe UI", 11, FontStyle.Bold), Cursor = Cursors.Hand };
                 btnReject.HoverState.FillColor = Color.Red; btnReject.HoverState.ForeColor = Color.FromArgb(254, 242, 242);
 
-                btnAccept.Click += (s, e) => { MessageBox.Show("Silakan daftarkan penyewa secara manual melalui halaman 'Penyewa' dengan data booking ini.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); };
-                btnReject.Click += async (s, e) => { if (MessageBox.Show("Tolak reservasi ini?", "Konfirmasi", MessageBoxButtons.YesNo) == DialogResult.Yes) await ActionReject(RejectUrl + idDetail); };
+                btnAccept.Click += async (s, e) => {
+                    if (MessageBox.Show("Terima reservasi ini dan jadikan penyewa aktif?", "Konfirmasi", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        await ActionProcess(AcceptUrl + idDetail, "diterima");
+                };
+                btnReject.Click += async (s, e) => {
+                    if (MessageBox.Show("Tolak reservasi ini?", "Konfirmasi", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        await ActionProcess(RejectUrl + idDetail, "ditolak");
+                };
                 sp4.Controls.Add(btnAccept); sp4.Controls.Add(btnReject);
             }
             else
@@ -171,7 +181,10 @@ namespace KostPakYoyok
             pD.Controls.Add(sp4);
         }
 
-        private async Task ActionReject(string url)
+        // =====================================================
+        // API ACTIONS
+        // =====================================================
+        private async Task ActionProcess(string url, string actionName)
         {
             try
             {
@@ -179,13 +192,20 @@ namespace KostPakYoyok
                 {
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
                     var resp = await client.PutAsync(url, null);
-                    if (resp.IsSuccessStatusCode) { MessageBox.Show("Reservasi berhasil ditolak"); await LoadRiwayatReservasiAsync(); }
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show($"Reservasi berhasil {actionName}");
+                        await LoadRiwayatReservasiAsync();
+                    }
                     else MessageBox.Show("Gagal: " + await resp.Content.ReadAsStringAsync());
                 }
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
         }
 
+        // =====================================================
+        // LAYOUT HELPERS
+        // =====================================================
         private void ReLayoutAll()
         {
             this.SuspendLayout();

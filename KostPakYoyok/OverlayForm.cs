@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -10,6 +10,9 @@ namespace KostPakYoyok
 {
     public class OverlayForm : Form
     {
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public OverlayForm(Form parentForm)
         {
             this.FormBorderStyle = FormBorderStyle.None;
@@ -17,13 +20,12 @@ namespace KostPakYoyok
             this.Opacity = 0.5;
             this.StartPosition = FormStartPosition.Manual;
 
-            // Hanya menutupi area parent form, bukan seluruh layar
             this.Location = parentForm.Location;
             this.Size = parentForm.Size;
 
             this.ShowInTaskbar = false;
-            this.Owner = parentForm; // Set owner
-            this.TopMost = false; // Jangan TopMost agar form profil bisa di atas
+            this.Owner = parentForm;
+            this.TopMost = false;
         }
     }
 }

@@ -9,15 +9,20 @@ namespace KostPakYoyok
     {
         public FormZoomGambar(Image img)
         {
+            // =====================================================
+            // FORM CONFIGURATION
+            // =====================================================
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.CenterParent;
             this.BackColor = Color.FromArgb(30, 30, 30);
             this.Size = new Size(800, 600);
             this.ShowInTaskbar = false;
 
-            // Efek membulat mang!
             Guna2Elipse el = new Guna2Elipse { TargetControl = this, BorderRadius = 20 };
 
+            // =====================================================
+            // CONTROLS INITIALIZATION
+            // =====================================================
             var pic = new Guna2PictureBox
             {
                 Image = img,
@@ -37,14 +42,16 @@ namespace KostPakYoyok
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 Cursor = Cursors.Hand
             };
+
+            // =====================================================
+            // EVENTS
+            // =====================================================
             btnClose.Click += (s, e) => this.Close();
+            pic.Click += (s, e) => this.Close();
 
             this.Controls.Add(btnClose);
             this.Controls.Add(pic);
             btnClose.BringToFront();
-
-            // Klik gambar juga bisa nutup mang
-            pic.Click += (s, e) => this.Close();
         }
     }
 }

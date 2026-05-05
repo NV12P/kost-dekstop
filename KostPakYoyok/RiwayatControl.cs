@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,23 +12,30 @@ namespace KostPakYoyok
 {
     public partial class RiwayatControl : UserControl
     {
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public RiwayatControl()
         {
             InitializeComponent();
         }
 
-        private void RiwayatControl_Load(object sender, EventArgs e)
-        {
-            ShowPage(new RiwayatPenghuniAktif());
-        }
-
+        // =====================================================
+        // UI LOGIC
+        // =====================================================
         private void ShowPage(UserControl page)
         {
             panelRiwayat.Controls.Clear();
-
             page.Dock = DockStyle.Fill;
-
             panelRiwayat.Controls.Add(page);
+        }
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
+        private void RiwayatControl_Load(object sender, EventArgs e)
+        {
+            ShowPage(new RiwayatPenghuniAktif());
         }
 
         private void btnPenghuniAktif_Click(object sender, EventArgs e)

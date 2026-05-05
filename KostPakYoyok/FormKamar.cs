@@ -17,6 +17,9 @@ namespace KostPakYoyok
         private bool isEditMode = false;
         private string selectedFotoPath = ""; 
 
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public FormKamar()
         {
             InitializeComponent();
@@ -55,35 +58,9 @@ namespace KostPakYoyok
             }
         }
 
-        private void btnFotoKamar_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.Title = "Pilih Foto Kamar";
-                ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.webp";
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    selectedFotoPath = ofd.FileName;
-                    btnHapusFoto.Visible = true;
-                    btnFotoKamar.Width = 340; 
-                    btnFotoKamar.Text = System.IO.Path.GetFileName(selectedFotoPath);
-                }
-            }
-        }
-
-        private void btnHapusFoto_Click(object sender, EventArgs e)
-        {
-            selectedFotoPath = "";
-            btnHapusFoto.Visible = false;
-            btnFotoKamar.Width = 385; 
-            btnFotoKamar.Text = "Pilih Foto";
-        }
-
-        private void btnSimpan_Click(object sender, EventArgs e)
-        {
-            _ = SaveKamarAsync();
-        }
-
+        // =====================================================
+        // API METHODS
+        // =====================================================
         private async Task SaveKamarAsync()
         {
             btnTambahKamar.Enabled = false;
@@ -111,14 +88,12 @@ namespace KostPakYoyok
                     content.Add(new StringContent(nomor), "nomor_kamar");
                     content.Add(new StringContent(cleanedHarga), "harga_kamar_perbulan");
 
-                    // Kirim Fasilitas
                     var fasKamar = textFasilitasKamar.Text.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
                     var fasBersama = textFasilitasBersama.Text.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
 
                     foreach (var f in fasKamar) content.Add(new StringContent(f), "fasilitas_kamar[]");
                     foreach (var f in fasBersama) content.Add(new StringContent(f), "fasilitas_bersama[]");
 
-                    // Upload Foto (Pake StreamContent biar lebih mantap mang)
                     if (!string.IsNullOrWhiteSpace(selectedFotoPath) && System.IO.File.Exists(selectedFotoPath))
                     {
                         var stream = new System.IO.FileStream(selectedFotoPath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
@@ -156,6 +131,38 @@ namespace KostPakYoyok
                 btnTambahKamar.Enabled = true;
                 Cursor.Current = prevCursor;
             }
+        }
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
+        private void btnFotoKamar_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Pilih Foto Kamar";
+                ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.webp";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    selectedFotoPath = ofd.FileName;
+                    btnHapusFoto.Visible = true;
+                    btnFotoKamar.Width = 340; 
+                    btnFotoKamar.Text = System.IO.Path.GetFileName(selectedFotoPath);
+                }
+            }
+        }
+
+        private void btnHapusFoto_Click(object sender, EventArgs e)
+        {
+            selectedFotoPath = "";
+            btnHapusFoto.Visible = false;
+            btnFotoKamar.Width = 385; 
+            btnFotoKamar.Text = "Pilih Foto";
+        }
+
+        private void btnSimpan_Click(object sender, EventArgs e)
+        {
+            _ = SaveKamarAsync();
         }
 
         private void textHarga_TextChanged(object sender, EventArgs e)

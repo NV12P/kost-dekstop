@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,11 +12,17 @@ namespace KostPakYoyok
 {
     public partial class PemasukanControl : UserControl
     {
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public PemasukanControl()
         {
             InitializeComponent();
         }
 
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
         private void guna2Button2_Click(object sender, EventArgs e)
         {
 

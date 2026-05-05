@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
@@ -10,14 +10,19 @@ namespace KostPakYoyok
 {
     public partial class LoginControl : UserControl
     {
-        // Event untuk berpindah ke register
         public event EventHandler GoToRegisterClicked;
 
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public LoginControl()
         {
             InitializeComponent();
         }
 
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
         private void LoginControl_Load(object sender, EventArgs e)
         {
         }
@@ -27,6 +32,9 @@ namespace KostPakYoyok
             GoToRegisterClicked?.Invoke(this, EventArgs.Empty);
         }
 
+        // =====================================================
+        // AUTHENTICATION LOGIC
+        // =====================================================
         private async void btnLogin_Click(object sender, EventArgs e)
         {
             btnLogin.Enabled = false;
@@ -81,7 +89,6 @@ namespace KostPakYoyok
                         return;
                     }
 
-                    // coba baca status/message bila ada
                     var status = (string)resObj["status"] ?? (string)resObj["meta"]?["status"];
                     var message = (string)resObj["message"] ?? (string)resObj["meta"]?["message"] ?? "";
 
@@ -89,7 +96,6 @@ namespace KostPakYoyok
 
                     if (ok)
                     {
-                        // Ambil token dari beberapa kemungkinan lokasi respons
                         string token = (string)resObj["token"]
                             ?? (string)resObj["access_token"]
                             ?? (string)resObj["data"]?["token"]
@@ -97,14 +103,9 @@ namespace KostPakYoyok
 
                         if (!string.IsNullOrWhiteSpace(token))
                         {
-                            Session.Token = token; // simpan token agar kontrol lain (DashboardControl) bisa pakai
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("Login succeeded but no token found in response: " + result);
+                            Session.Token = token; 
                         }
 
-                        // Ambil nama user dari beberapa kemungkinan lokasi respons
                         string namaUser = (string)resObj["user"]?["nama_profile"]
                             ?? (string)resObj["user"]?["name"]
                             ?? (string)resObj["user"]?["nama"]
@@ -112,22 +113,18 @@ namespace KostPakYoyok
                             ?? (string)resObj["data"]?["user"]?["name"]
                             ?? (string)resObj["name"]
                             ?? (string)resObj["nama"]
-                            ?? textUsername.Text; // fallback pakai username input
+                            ?? textUsername.Text;
 
                         Session.Nama = namaUser;
 
-                        // Buka form utama dan set nama
                         FormUtama dashboard = new FormUtama();
                         dashboard.StartPosition = FormStartPosition.CenterScreen;
-
-                        // set nama sebelum show agar segera terlihat
                         dashboard.SetUserName(Session.Nama);
 
                         dashboard.Show();
                         dashboard.BringToFront();
                         dashboard.Activate();
 
-                        // Sembunyikan form account (jangan Close() agar Application.Run tidak berhenti)
                         var parentForm = this.FindForm();
                         parentForm?.Hide();
                     }

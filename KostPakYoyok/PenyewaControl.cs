@@ -16,14 +16,16 @@ namespace KostPakYoyok
 
         private JToken selectedRoomItem = null;
         private long selectedRoomPrice = 0;
-        private long cicilanSebelumnya = 0; // total cicilan yg sudah tersimpan
+        private long cicilanSebelumnya = 0;
         private string selectedBuktiPath = "";
 
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public PenyewaControl()
         {
             InitializeComponent();
 
-            // Aktifkan scroll di panel list kamar
             guna2ShadowPanel2.AutoScroll = true;
 
             guna2ShadowPanel3.Visible = false;
@@ -90,8 +92,6 @@ namespace KostPakYoyok
                         y += rowHeight;
                     }
 
-                    // Set tinggi panel agar memanjang ke bawah mengikuti jumlah kamar
-                    // y sekarang adalah posisi bawah dari row terakhir + sedikit margin
                     guna2ShadowPanel2.Height = y + 20;
 
                     labelDataKamar.Text = arr.Count.ToString();
@@ -109,10 +109,8 @@ namespace KostPakYoyok
         private Panel CreateRoomRow(JToken item, int y)
         {
             string status = item["status"]?.ToString().ToLower() ?? "tersedia";
-            // Ambil nomor kamar mang, langsung pakai key 'nama' sesuai controller Laravel
             string rawNamaKamar = item["nama"]?.ToString() ?? "Kamar";
             
-            // Bersihkan string dari kotoran ID atau typo (misal: "7 amar 1" jadi "Kamar 1")
             string namaKamar = System.Text.RegularExpressions.Regex.Replace(rawNamaKamar, @"^\d+\s*\.?[ ]*", "");
             if (namaKamar.Contains("amar") && !namaKamar.Contains("Kamar"))
             {
@@ -184,13 +182,10 @@ namespace KostPakYoyok
             var penyewa = roomItem["penyewa"];
             if (penyewa == null) return;
 
-            // Di controller baru pakai key 'harga' mang
             selectedRoomPrice = roomItem["harga"]?.ToObject<long>() ?? roomItem["harga_kamar_perbulan"]?.ToObject<long>() ?? 0;
 
-            // Ambil ID kamar mang (room ID)
             string idKamar = roomItem["id"]?.ToString() ?? "-";
 
-            // Rapikan judulnya mang, jangan ada angka ID yang ganggu!
             label21.Text = "Informasi Data Kamar " + nomorKamar; 
 
             textNama.Text = penyewa["nama"]?.ToString() ?? "";
@@ -198,41 +193,30 @@ namespace KostPakYoyok
             textBulanSewa.Text = penyewa["sewabrpbulan"]?.ToString() ?? "1";
             textCatatan.Text = penyewa["catatan"]?.ToString() ?? "";
 
-            // LOGIKA TUNAI VS TRANSFER
             string metode = (penyewa["metodepembayaran"] ?? penyewa["metode_pembayaran"])?.ToString().ToLower() ?? "";
             
-            // Lebar awal textTotalCicilan biasanya sekitar 200-an, kita buat dinamis mang
             if (metode.Contains("tunai"))
             {
                 btnBukti.Visible = false;
-                // Mang Aceng lebarin kotak inputnya mang! 
-                // Kita buat dia nutupin area yang harusnya ada tombolnya
                 textTotalCicilan.Width = 290; 
             }
             else
             {
-                // Jika transfer atau field kosong, tetap munculkan tombol biar aman
                 btnBukti.Visible = true;
-                // Balikin ke lebar standar biar gak tabrakan sama tombol mang
                 textTotalCicilan.Width = 240; 
             }
 
-            // total cicilan dari API (Sesuai dokumentasi 4.1 fieldnya adalah 'nominal')
             long cicilanDariTabel = penyewa["cicilan"]?.Sum(x => x["nominal"]?.ToObject<long?>() ?? 0) ?? 0;
-            
-            // CEK FIELD total_cicilan (Sesuai dokumentasi 4.4)
             long totalCicilanField = penyewa["total_cicilan"]?.ToObject<long?>() ?? 0;
 
-            // Gunakan mana yang lebih besar atau tersedia
             cicilanSebelumnya = Math.Max(cicilanDariTabel, totalCicilanField);
 
             textTotalCicilan.Text = "0";
 
-            // RESET STATUS UPLOAD FOTO BIAR GAK NYASAR KE PENYEWA LAIN
             selectedBuktiPath = "";
-            btnBukti.FillColor = Color.FromArgb(183, 188, 196); // biar aestetik mang
-            btnBukti.ForeColor = Color.FromArgb(26, 18, 101);   // Teks biru tua biar kontras
-            btnBukti.Text = ""; // Kosongkan teks agar tidak menutupi logo mang
+            btnBukti.FillColor = Color.FromArgb(183, 188, 196);
+            btnBukti.ForeColor = Color.FromArgb(26, 18, 101);
+            btnBukti.Text = "";
 
             guna2ShadowPanel3.Visible = true;
 
@@ -258,24 +242,20 @@ namespace KostPakYoyok
             if (sisa < 0)
                 sisa = 0;
 
-            // TOTAL CICILAN
             labelTotalCicilan.Text = "Rp. " + totalSudahBayar.ToString("N0");
 
-            // TOTAL HARUS DIBAYAR
             labelHarusbayar.Text = "Rp. " + sisa.ToString("N0");
 
-            // jika lunas = biru tua
             if (sisa == 0)
                 labelHarusbayar.ForeColor = Color.FromArgb(26, 18, 101);
             else
                 labelHarusbayar.ForeColor = Color.Red;
 
-            // TEXT KETERANGAN
             label7.Text = "Total yang Harus Dibayar";
         }
 
         // =====================================================
-        // SIMPAN PERUBAHAN / BAYAR CICILAN
+        // SIMPAN PERUBAHAN
         // =====================================================
         private async Task SavePenyewaChangesAsync()
         {
@@ -293,25 +273,21 @@ namespace KostPakYoyok
                     c.DefaultRequestHeaders.Authorization =
                         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
 
-                    // Ambil data asli dari penyewa mang biar lengkap pas dikirim ulang
                     var pData = selectedRoomItem["penyewa"];
-                    string nama = textNama.Text; // Ambil dari textbox langsung mang biar bisa diedit
-                    string telp = textNomorTelepon.Text; // Ambil dari textbox langsung mang
+                    string nama = textNama.Text;
+                    string telp = textNomorTelepon.Text;
                     string metode = (pData["metodepembayaran"] ?? pData["metode_pembayaran"])?.ToString() ?? "transfer";
                     
-                    // Cek status pembayaran (biasanya default pending)
                     string status = (pData["statuspembayaran"] ?? pData["status_pembayaran"])?.ToString() ?? "pending";
 
                     var form = new MultipartFormDataContent();
 
-                    // SESUAI CONTROLLER LARAVEL MANG!
                     form.Add(new StringContent(nama), "nama_penyewa");
                     form.Add(new StringContent(telp), "telp_penyewa");
                     form.Add(new StringContent(bulan.ToString()), "sewa_berapa_bulan");
                     form.Add(new StringContent(metode), "metode_pembayaran");
                     form.Add(new StringContent(status), "status_pembayaran");
                     
-                    // Field opsional mang
                     form.Add(new StringContent(textCatatan.Text), "catatan");
                     
                     if (cicilanBaru > 0)
@@ -319,9 +295,8 @@ namespace KostPakYoyok
                         form.Add(new StringContent(cicilanBaru.ToString()), "cicilan");
                     }
 
-                    form.Add(new StringContent("PUT"), "_method"); // Laravel Spoofing mang!
+                    form.Add(new StringContent("PUT"), "_method");
 
-                    // upload foto bukti cicilan mang
                     if (!string.IsNullOrWhiteSpace(selectedBuktiPath))
                     {
                         byte[] bytes = System.IO.File.ReadAllBytes(selectedBuktiPath);
@@ -337,7 +312,6 @@ namespace KostPakYoyok
                         );
                     }
 
-                    // PAKAI POST MANG! Biar Multipart-nya kebaca Laravel
                     var resp = await c.PostAsync(
                         $"{PenyewaApiUrl}/{selectedRoomItem["id"]}",
                         form
@@ -351,12 +325,10 @@ namespace KostPakYoyok
 
                         selectedBuktiPath = "";
                         btnBukti.Text = ""; 
-                        btnBukti.FillColor = Color.FromArgb(241, 241, 241); // Balikin ke abu-abu mang
+                        btnBukti.FillColor = Color.FromArgb(241, 241, 241);
                         btnBukti.ForeColor = Color.FromArgb(26, 18, 101);
 
                         await LoadPenyewaAsync();
-                        // Jangan tutup panelnya dulu mang biar bisa nyicil lagi
-                        // guna2ShadowPanel3.Visible = false; 
                     }
                     else
                     {
@@ -396,7 +368,6 @@ namespace KostPakYoyok
                     c.DefaultRequestHeaders.Authorization =
                         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
 
-                    // Pake spoofing biar aman mang
                     var content = new MultipartFormDataContent();
                     content.Add(new StringContent("PUT"), "_method");
 
@@ -440,7 +411,6 @@ namespace KostPakYoyok
             {
                 using (FormPenyewa form = new FormPenyewa())
                 {
-                    // 1. Atur Background Overlay
                     formbackground.StartPosition = FormStartPosition.Manual;
                     formbackground.FormBorderStyle = FormBorderStyle.None;
                     formbackground.Opacity = 0.30d;
@@ -451,7 +421,6 @@ namespace KostPakYoyok
                     formbackground.TopMost = false;
                     formbackground.Show();
 
-                    // 2. Atur Form Penyewa
                     form.StartPosition = FormStartPosition.Manual;
                     form.Owner = formbackground;
                     form.Location = new Point(
@@ -509,6 +478,9 @@ namespace KostPakYoyok
             }
         }
 
+        // =====================================================
+        // UI EVENT HANDLERS
+        // =====================================================
         private void guna2ShadowPanel3_Paint(object sender, PaintEventArgs e) { }
         private void PenyewaControl_Load(object sender, EventArgs e) { }
 
@@ -527,10 +499,8 @@ namespace KostPakYoyok
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    // simpan path file terpilih (jika sebelumnya sudah ada variabel)
                     selectedBuktiPath = ofd.FileName;
 
-                    // ubah warna tombol jadi hijau muda
                     btnBukti.FillColor = Color.LimeGreen;
                     btnBukti.ForeColor = Color.Black;
 
@@ -544,4 +514,4 @@ namespace KostPakYoyok
 
         }
     }
-   }
+}

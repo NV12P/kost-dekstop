@@ -19,15 +19,15 @@ namespace KostPakYoyok
         private List<Guna2Panel> cards = new List<Guna2Panel>();
         private Guna2Panel selectedCard = null;
 
-        // =========================
-        // PROPERTY UNTUK EDIT DATA
-        // =========================
         public int SelectedId { get; private set; }
         public string SelectedKeterangan { get; private set; }
         public long SelectedNominal { get; private set; }
 
         public event EventHandler SelectionChanged;
 
+        // =====================================================
+        // CONSTRUCTOR
+        // =====================================================
         public IsiRiwayatPengeluaran()
         {
             InitializeComponent();
@@ -40,25 +40,19 @@ namespace KostPakYoyok
             this.Click += (s, e) => DeselectAll();
         }
 
-        // =========================
-        // EVENT
-        // =========================
+        // =====================================================
+        // UI LOGIC
+        // =====================================================
         protected virtual void OnSelectionChanged()
         {
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        // =========================
-        // FORMAT RUPIAH
-        // =========================
         private string FormatCurrency(long value)
         {
             return "Rp. " + value.ToString("N0");
         }
 
-        // =========================
-        // RESET PILIHAN (Tanpa trigger event)
-        // =========================
         private void InternalDeselect()
         {
             if (selectedCard != null)
@@ -79,9 +73,6 @@ namespace KostPakYoyok
             OnSelectionChanged();
         }
 
-        // =========================
-        // PILIH CARD
-        // =========================
         private void SelectCard(Guna2Panel card)
         {
             if (selectedCard == card)
@@ -90,7 +81,6 @@ namespace KostPakYoyok
                 return;
             }
 
-            // Reset state internal tanpa sebar gosip (trigger event) dulu
             InternalDeselect();
 
             selectedCard = card;
@@ -100,7 +90,6 @@ namespace KostPakYoyok
             foreach (Control c in selectedCard.Controls)
                 c.BackColor = highlight;
 
-            // Pastikan Tag ada isinya
             if (card.Tag != null)
                 SelectedId = Convert.ToInt32(card.Tag);
 
@@ -120,102 +109,9 @@ namespace KostPakYoyok
                 SelectedNominal = val;
             }
 
-            // Baru deh sebar gosip kalau data udah siap
             OnSelectionChanged();
         }
 
-        // =========================
-        // LOAD DATA API
-        // =========================
-        private async Task LoadDataAsync()
-        {
-            try
-            {
-                foreach (var c in cards)
-                {
-                    this.Controls.Remove(c);
-                    c.Dispose();
-                }
-
-                cards.Clear();
-                DeselectAll();
-
-                using (var client = new HttpClient())
-                {
-                    if (!string.IsNullOrWhiteSpace(Session.Token))
-                    {
-                        client.DefaultRequestHeaders.Authorization =
-                            new System.Net.Http.Headers.AuthenticationHeaderValue(
-                                "Bearer",
-                                Session.Token
-                            );
-                    }
-
-                    var resp = await client.GetAsync(ApiUrl);
-                    var json = await resp.Content.ReadAsStringAsync();
-
-                    if (!resp.IsSuccessStatusCode)
-                    {
-                        MessageBox.Show("Gagal load data");
-                        return;
-                    }
-
-                    var arr = JArray.Parse(json)
-                        .Where(x => x["tipe"]?.ToString() == "pengeluaran") // Filter cuma pengeluaran
-                        .OrderByDescending(x =>
-                            DateTime.Parse(
-                                x["created_at"]?.ToString()
-                                ?? DateTime.MinValue.ToString()
-                            )
-                        )
-                        .ToList();
-
-                    foreach (var item in arr)
-                    {
-                        // Handle id_keuangan (contoh: "keluar-1" -> ambil 1)
-                        string rawId = item["id_keuangan"]?.ToString() ?? "0";
-                        int id = 0;
-                        if (rawId.Contains("-"))
-                        {
-                            int.TryParse(rawId.Split('-').Last(), out id);
-                        }
-                        else
-                        {
-                            int.TryParse(rawId, out id);
-                        }
-
-                        string keterangan =
-                            item["keterangan"]?.ToString() ?? "-";
-
-                        long nominal =
-                            item["nominal"]?.ToObject<long>() ?? 0;
-
-                        string tanggal =
-                            item["created_at"]?.ToString() ?? "";
-
-                        if (DateTime.TryParse(tanggal, out DateTime tgl))
-                            tanggal = tgl.ToString("dd MMM yyyy");
-
-                        AddNewCardInternal(
-                            id,
-                            keterangan,
-                            tanggal,
-                            nominal
-                        );
-                    }
-
-                    ReflowCards();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error : " + ex.Message);
-            }
-        }
-
-        // =========================
-        // BUAT CARD
-        // =========================
         private void AddNewCardInternal(
             int id,
             string keterangan,
@@ -286,9 +182,6 @@ namespace KostPakYoyok
             cards.Add(card);
         }
 
-        // =========================
-        // TAMBAH CARD BARU
-        // =========================
         public void AddNewCard(string keterangan, long nominal)
         {
             string tanggal = DateTime.Now.ToString("dd MMM yyyy");
@@ -308,9 +201,6 @@ namespace KostPakYoyok
             ReflowCards();
         }
 
-        // =========================
-        // SEARCH
-        // =========================
         public void FilterData(string keyword)
         {
             keyword = keyword.ToLower();
@@ -332,9 +222,6 @@ namespace KostPakYoyok
             ReflowCards();
         }
 
-        // =========================
-        // ATUR ULANG POSISI CARD
-        // =========================
         private void ReflowCards()
         {
             int y = StartY;
@@ -363,9 +250,97 @@ namespace KostPakYoyok
             }
         }
 
-        // =========================
-        // LOAD CONTROL
-        // =========================
+        // =====================================================
+        // DATA LOADING
+        // =====================================================
+        private async Task LoadDataAsync()
+        {
+            try
+            {
+                foreach (var c in cards)
+                {
+                    this.Controls.Remove(c);
+                    c.Dispose();
+                }
+
+                cards.Clear();
+                DeselectAll();
+
+                using (var client = new HttpClient())
+                {
+                    if (!string.IsNullOrWhiteSpace(Session.Token))
+                    {
+                        client.DefaultRequestHeaders.Authorization =
+                            new System.Net.Http.Headers.AuthenticationHeaderValue(
+                                "Bearer",
+                                Session.Token
+                            );
+                    }
+
+                    var resp = await client.GetAsync(ApiUrl);
+                    var json = await resp.Content.ReadAsStringAsync();
+
+                    if (!resp.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Gagal load data");
+                        return;
+                    }
+
+                    var arr = JArray.Parse(json)
+                        .Where(x => x["tipe"]?.ToString() == "pengeluaran")
+                        .OrderByDescending(x =>
+                            DateTime.Parse(
+                                x["created_at"]?.ToString()
+                                ?? DateTime.MinValue.ToString()
+                            )
+                        )
+                        .ToList();
+
+                    foreach (var item in arr)
+                    {
+                        string rawId = item["id_keuangan"]?.ToString() ?? "0";
+                        int id = 0;
+                        if (rawId.Contains("-"))
+                        {
+                            int.TryParse(rawId.Split('-').Last(), out id);
+                        }
+                        else
+                        {
+                            int.TryParse(rawId, out id);
+                        }
+
+                        string keterangan =
+                            item["keterangan"]?.ToString() ?? "-";
+
+                        long nominal =
+                            item["nominal"]?.ToObject<long>() ?? 0;
+
+                        string tanggal =
+                            item["created_at"]?.ToString() ?? "";
+
+                        if (DateTime.TryParse(tanggal, out DateTime tgl))
+                            tanggal = tgl.ToString("dd MMM yyyy");
+
+                        AddNewCardInternal(
+                            id,
+                            keterangan,
+                            tanggal,
+                            nominal
+                        );
+                    }
+
+                    ReflowCards();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+            }
+        }
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
         private async void IsiRiwayatPengeluaran_Load(
             object sender,
             EventArgs e
