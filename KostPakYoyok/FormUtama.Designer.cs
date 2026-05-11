@@ -58,7 +58,7 @@
             // 
             this.panelContent.AutoScroll = true;
             this.panelContent.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.panelContent.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelContent.Location = new System.Drawing.Point(0, 112);
             this.panelContent.Name = "panelContent";
             this.panelContent.Size = new System.Drawing.Size(1902, 841);

@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DashboardControl));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.guna2ShadowPanel6 = new Guna.UI2.WinForms.Guna2ShadowPanel();
             this.labelKamarTersedia = new System.Windows.Forms.Label();
             this.guna2PictureBox4 = new Guna.UI2.WinForms.Guna2PictureBox();
@@ -60,17 +60,18 @@
             // 
             // guna2ShadowPanel6
             // 
+            this.guna2ShadowPanel6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.guna2ShadowPanel6.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel6.Controls.Add(this.labelKamarTersedia);
             this.guna2ShadowPanel6.Controls.Add(this.guna2PictureBox4);
             this.guna2ShadowPanel6.Controls.Add(this.label7);
             this.guna2ShadowPanel6.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel6.Location = new System.Drawing.Point(1257, 623);
+            this.guna2ShadowPanel6.Location = new System.Drawing.Point(1282, 623);
             this.guna2ShadowPanel6.Name = "guna2ShadowPanel6";
             this.guna2ShadowPanel6.Radius = 12;
             this.guna2ShadowPanel6.ShadowColor = System.Drawing.Color.Black;
             this.guna2ShadowPanel6.ShadowDepth = 50;
-            this.guna2ShadowPanel6.Size = new System.Drawing.Size(445, 147);
+            this.guna2ShadowPanel6.Size = new System.Drawing.Size(600, 147);
             this.guna2ShadowPanel6.TabIndex = 15;
             // 
             // labelKamarTersedia
@@ -110,17 +111,19 @@
             // 
             // guna2ShadowPanel5
             // 
+            this.guna2ShadowPanel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.guna2ShadowPanel5.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel5.Controls.Add(this.labelPengeluaran);
             this.guna2ShadowPanel5.Controls.Add(this.label5);
             this.guna2ShadowPanel5.Controls.Add(this.guna2PictureBox3);
             this.guna2ShadowPanel5.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel5.Location = new System.Drawing.Point(782, 623);
+            this.guna2ShadowPanel5.Location = new System.Drawing.Point(640, 623);
             this.guna2ShadowPanel5.Name = "guna2ShadowPanel5";
             this.guna2ShadowPanel5.Radius = 12;
             this.guna2ShadowPanel5.ShadowColor = System.Drawing.Color.Black;
             this.guna2ShadowPanel5.ShadowDepth = 50;
-            this.guna2ShadowPanel5.Size = new System.Drawing.Size(469, 147);
+            this.guna2ShadowPanel5.Size = new System.Drawing.Size(622, 147);
             this.guna2ShadowPanel5.TabIndex = 14;
             // 
             // labelPengeluaran
@@ -160,17 +163,18 @@
             // 
             // guna2ShadowPanel4
             // 
+            this.guna2ShadowPanel4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.guna2ShadowPanel4.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel4.Controls.Add(this.labelPemasukan);
             this.guna2ShadowPanel4.Controls.Add(this.label2);
             this.guna2ShadowPanel4.Controls.Add(this.guna2PictureBox2);
             this.guna2ShadowPanel4.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel4.Location = new System.Drawing.Point(321, 623);
+            this.guna2ShadowPanel4.Location = new System.Drawing.Point(20, 623);
             this.guna2ShadowPanel4.Name = "guna2ShadowPanel4";
             this.guna2ShadowPanel4.Radius = 12;
             this.guna2ShadowPanel4.ShadowColor = System.Drawing.Color.Black;
             this.guna2ShadowPanel4.ShadowDepth = 50;
-            this.guna2ShadowPanel4.Size = new System.Drawing.Size(455, 147);
+            this.guna2ShadowPanel4.Size = new System.Drawing.Size(600, 147);
             this.guna2ShadowPanel4.TabIndex = 13;
             // 
             // labelPemasukan
@@ -210,16 +214,19 @@
             // 
             // guna2ShadowPanel3
             // 
+            this.guna2ShadowPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.guna2ShadowPanel3.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel3.Controls.Add(this.btnResultTahun);
             this.guna2ShadowPanel3.Controls.Add(this.label8);
             this.guna2ShadowPanel3.Controls.Add(this.chart1);
             this.guna2ShadowPanel3.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel3.Location = new System.Drawing.Point(321, 19);
+            this.guna2ShadowPanel3.Location = new System.Drawing.Point(20, 100);
             this.guna2ShadowPanel3.Name = "guna2ShadowPanel3";
             this.guna2ShadowPanel3.Radius = 12;
             this.guna2ShadowPanel3.ShadowColor = System.Drawing.Color.Black;
-            this.guna2ShadowPanel3.Size = new System.Drawing.Size(1381, 579);
+            this.guna2ShadowPanel3.Size = new System.Drawing.Size(1862, 480);
             this.guna2ShadowPanel3.TabIndex = 12;
             // 
             // btnResultTahun
@@ -235,9 +242,9 @@
             this.btnResultTahun.ForeColor = System.Drawing.SystemColors.Control;
             this.btnResultTahun.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.btnResultTahun.ImageSize = new System.Drawing.Size(30, 30);
-            this.btnResultTahun.Location = new System.Drawing.Point(55, 57);
+            this.btnResultTahun.Location = new System.Drawing.Point(26, 57);
             this.btnResultTahun.Name = "btnResultTahun";
-            this.btnResultTahun.Size = new System.Drawing.Size(153, 52);
+            this.btnResultTahun.Size = new System.Drawing.Size(153, 45);
             this.btnResultTahun.TabIndex = 5;
             this.btnResultTahun.Text = "Tahun ini";
             this.btnResultTahun.Click += new System.EventHandler(this.btnResultTahun_Click);
@@ -247,7 +254,7 @@
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI Semibold", 14F, System.Drawing.FontStyle.Bold);
             this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
-            this.label8.Location = new System.Drawing.Point(55, 19);
+            this.label8.Location = new System.Drawing.Point(20, 22);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(130, 32);
             this.label8.TabIndex = 15;
@@ -255,18 +262,21 @@
             // 
             // chart1
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
-            this.chart1.Location = new System.Drawing.Point(40, 140);
+            this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(26, 108);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series2.Legend = "Legend1";
-            series2.Name = "Sewa";
-            this.chart1.Series.Add(series2);
-            this.chart1.Size = new System.Drawing.Size(1300, 400);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series1.Legend = "Legend1";
+            series1.Name = "Sewa";
+            this.chart1.Series.Add(series1);
+            this.chart1.Size = new System.Drawing.Size(1813, 352);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
