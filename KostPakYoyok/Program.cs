@@ -15,8 +15,12 @@ namespace KostPakYoyok
         [STAThread]
         static void Main()
         {
+            // =====================================================
+            // SECURITY PROTOCOL CONFIGURATION
+            // =====================================================
             ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            // Aktifkan TLS 1.2 dan TLS 1.3 (3072) biar koneksi lancar mang!
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 

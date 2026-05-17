@@ -435,6 +435,31 @@ namespace KostPakYoyok
                             c.DefaultRequestHeaders.Authorization =
                                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
 
+                            // =====================================================
+                            // VALIDASI NIK UNIK
+                            // =====================================================
+                            try
+                            {
+                                var checkResp = await c.GetAsync("https://kost.arcv.web.id/api/riwayat");
+                                if (checkResp.IsSuccessStatusCode)
+                                {
+                                    var riwayatJson = await checkResp.Content.ReadAsStringAsync();
+                                    var riwayatArr = JArray.Parse(riwayatJson);
+                                    
+                                    bool exists = riwayatArr.Any(x => 
+                                        x["nik"]?.ToString() == form.NIK && 
+                                        x["kategori"]?.ToString() != "lama" // Hanya cek yang masih relevan (aktif/booking/survei)
+                                    );
+
+                                    if (exists)
+                                    {
+                                        MessageBox.Show($"NIK '{form.NIK}' sudah terdaftar di sistem dan masih aktif. Silakan gunakan NIK lain atau cek riwayat.", "NIK Tidak Unik", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        return;
+                                    }
+                                }
+                            }
+                            catch { /* Abaikan error network pas ngecek, lanjut ke post aja nanti server yang nolak kalo emang duplikat */ }
+
                             var payload = new
                             {
                                 kamar_id = roomItem["id"],

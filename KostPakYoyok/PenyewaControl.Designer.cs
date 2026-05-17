@@ -1,4 +1,4 @@
-﻿namespace KostPakYoyok
+namespace KostPakYoyok
 {
     partial class PenyewaControl
     {
@@ -97,7 +97,7 @@
             this.guna2ShadowPanel3.Controls.Add(this.label4);
             this.guna2ShadowPanel3.Controls.Add(this.btnSimpan);
             this.guna2ShadowPanel3.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel3.Location = new System.Drawing.Point(814, 35);
+            this.guna2ShadowPanel3.Location = new System.Drawing.Point(765, 120);
             this.guna2ShadowPanel3.Name = "guna2ShadowPanel3";
             this.guna2ShadowPanel3.Radius = 12;
             this.guna2ShadowPanel3.ShadowColor = System.Drawing.Color.Black;
@@ -450,7 +450,7 @@
             this.guna2ShadowPanel2.Controls.Add(this.label11);
             this.guna2ShadowPanel2.Controls.Add(this.label1);
             this.guna2ShadowPanel2.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel2.Location = new System.Drawing.Point(228, 35);
+            this.guna2ShadowPanel2.Location = new System.Drawing.Point(165, 120);
             this.guna2ShadowPanel2.Name = "guna2ShadowPanel2";
             this.guna2ShadowPanel2.Radius = 12;
             this.guna2ShadowPanel2.ShadowColor = System.Drawing.Color.Black;

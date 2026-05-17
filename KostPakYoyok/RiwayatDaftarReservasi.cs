@@ -20,6 +20,8 @@ namespace KostPakYoyok
 
         private Panel activeEntry = null;
 
+        private List<JToken> allData = new List<JToken>();
+
         public RiwayatDaftarReservasi()
         {
             InitializeComponent();
@@ -29,9 +31,34 @@ namespace KostPakYoyok
 
             this.Load += async (s, e) => {
                 await LoadRiwayatReservasiAsync();
-                ReLayoutAll();
             };
             this.SizeChanged += (s, e) => ReLayoutAll();
+        }
+
+        public void FilterData(string query)
+        {
+            string q = query.ToLower();
+            var filtered = allData.Where(x => 
+                (x["penyewa"]?.ToString().ToLower().Contains(q) ?? false) || 
+                (x["kamar"]?.ToString().ToLower().Contains(q) ?? false)
+            ).ToList();
+            RenderRows(filtered);
+        }
+
+        private void RenderRows(List<JToken> data)
+        {
+            this.SuspendLayout();
+            var controlsToRemove = this.Controls.Cast<Control>().Where(c => c.Name != null && c.Name.StartsWith("Entry_")).ToList();
+            foreach (var c in controlsToRemove) this.Controls.Remove(c);
+
+            int index = 1;
+            foreach (var item in data)
+            {
+                var row = CreateRow(item, index++, 0);
+                this.Controls.Add(row);
+            }
+            ReLayoutAll();
+            this.ResumeLayout(true);
         }
 
         // =====================================================
@@ -41,10 +68,6 @@ namespace KostPakYoyok
         {
             try
             {
-                this.SuspendLayout();
-                var controlsToRemove = this.Controls.Cast<Control>().Where(c => c.Name != null && c.Name.StartsWith("Entry_")).ToList();
-                foreach (var c in controlsToRemove) this.Controls.Remove(c);
-
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
@@ -52,22 +75,11 @@ namespace KostPakYoyok
                     if (!resp.IsSuccessStatusCode) return;
 
                     var arr = JArray.Parse(await resp.Content.ReadAsStringAsync());
-                    int index = 1;
-                    var reservasiData = arr.Where(x => x["kategori"]?.ToString() == "booking").ToList();
-
-                    foreach (var item in reservasiData)
-                    {
-                        var row = CreateRow(item, index++, 0);
-                        this.Controls.Add(row);
-                    }
+                    allData = arr.Where(x => x["kategori"]?.ToString() == "booking").ToList();
+                    RenderRows(allData);
                 }
             }
             catch (Exception ex) { MessageBox.Show("Gagal Memuat: " + ex.Message); }
-            finally
-            {
-                ReLayoutAll();
-                this.ResumeLayout(true);
-            }
         }
 
         // =====================================================

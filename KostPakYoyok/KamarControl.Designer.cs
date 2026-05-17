@@ -63,7 +63,7 @@
             this.btnTambah.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
             this.btnTambah.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnTambah.ForeColor = System.Drawing.Color.White;
-            this.btnTambah.Location = new System.Drawing.Point(1646, 8);
+            this.btnTambah.Location = new System.Drawing.Point(1646, 113);
             this.btnTambah.Name = "btnTambah";
             this.btnTambah.Size = new System.Drawing.Size(214, 53);
             this.btnTambah.TabIndex = 26;
@@ -90,7 +90,7 @@
             this.guna2ShadowPanel2.Controls.Add(this.btnEditKamar);
             this.guna2ShadowPanel2.Controls.Add(this.labelStatus);
             this.guna2ShadowPanel2.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel2.Location = new System.Drawing.Point(89, 134);
+            this.guna2ShadowPanel2.Location = new System.Drawing.Point(89, 234);
             this.guna2ShadowPanel2.Name = "guna2ShadowPanel2";
             this.guna2ShadowPanel2.Radius = 12;
             this.guna2ShadowPanel2.ShadowColor = System.Drawing.Color.Black;
@@ -301,7 +301,7 @@
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
-            this.label14.Location = new System.Drawing.Point(106, 0);
+            this.label14.Location = new System.Drawing.Point(106, 100);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(265, 38);
             this.label14.TabIndex = 29;
@@ -312,7 +312,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label1.Location = new System.Drawing.Point(109, 38);
+            this.label1.Location = new System.Drawing.Point(109, 138);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(251, 23);
             this.label1.TabIndex = 30;

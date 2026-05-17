@@ -60,7 +60,13 @@ namespace KostPakYoyok
 
         private void guna2TextBox1_TextChanged(object sender, EventArgs e)
         {
-
+            string query = guna2TextBox1.Text;
+            var activeControl = panelRiwayat.Controls.Cast<Control>().FirstOrDefault();
+            
+            if (activeControl is RiwayatPenghuniAktif aktif) aktif.FilterData(query);
+            else if (activeControl is RiwayatDaftarReservasi reservasi) reservasi.FilterData(query);
+            else if (activeControl is RiwayatDaftarSurvei survei) survei.FilterData(query);
+            else if (activeControl is RiwayatPenghuniLama lama) lama.FilterData(query);
         }
     }
 }

@@ -47,7 +47,7 @@
             this.guna2ShadowPanel2.Controls.Add(this.btnDaftarReservasi);
             this.guna2ShadowPanel2.Controls.Add(this.btnPenghuniAktif);
             this.guna2ShadowPanel2.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel2.Location = new System.Drawing.Point(90, 49);
+            this.guna2ShadowPanel2.Location = new System.Drawing.Point(165, 120);
             this.guna2ShadowPanel2.Name = "guna2ShadowPanel2";
             this.guna2ShadowPanel2.Radius = 10;
             this.guna2ShadowPanel2.ShadowColor = System.Drawing.Color.Black;
@@ -138,7 +138,7 @@
             this.guna2TextBox1.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
             this.guna2TextBox1.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.guna2TextBox1.Location = new System.Drawing.Point(1531, 49);
+            this.guna2TextBox1.Location = new System.Drawing.Point(1370, 120);
             this.guna2TextBox1.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.guna2TextBox1.Name = "guna2TextBox1";
             this.guna2TextBox1.PlaceholderText = "Cari...";
@@ -151,9 +151,9 @@
             // panelRiwayat
             // 
             this.panelRiwayat.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelRiwayat.Location = new System.Drawing.Point(0, 135);
+            this.panelRiwayat.Location = new System.Drawing.Point(0, 206);
             this.panelRiwayat.Name = "panelRiwayat";
-            this.panelRiwayat.Size = new System.Drawing.Size(1902, 715);
+            this.panelRiwayat.Size = new System.Drawing.Size(1902, 695);
             this.panelRiwayat.TabIndex = 21;
             // 
             // label1
@@ -161,7 +161,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
-            this.label1.Location = new System.Drawing.Point(81, 0);
+            this.label1.Location = new System.Drawing.Point(165, 35);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(313, 41);
             this.label1.TabIndex = 23;

@@ -20,6 +20,8 @@ namespace KostPakYoyok
         private Guna2Panel activeSubDetail = null;
         private Label activeSubArrow = null;
 
+        private List<JToken> allData = new List<JToken>();
+
         public RiwayatPenghuniLama()
         {
             InitializeComponent();
@@ -29,9 +31,35 @@ namespace KostPakYoyok
 
             this.Load += async (s, e) => {
                 await LoadRiwayatLamaAsync();
-                ReLayoutAll(); 
             };
             this.SizeChanged += (s, e) => ReLayoutAll(); 
+        }
+
+        public void FilterData(string query)
+        {
+            string q = query.ToLower();
+            var filtered = allData.Where(x => 
+                (x["penyewa"]?.ToString().ToLower().Contains(q) ?? false) || 
+                (x["nik"]?.ToString().ToLower().Contains(q) ?? false) ||
+                (x["kamar"]?.ToString().ToLower().Contains(q) ?? false)
+            ).ToList();
+            RenderRows(filtered);
+        }
+
+        private void RenderRows(List<JToken> data)
+        {
+            this.SuspendLayout();
+            var controlsToRemove = this.Controls.Cast<Control>().Where(c => c.Name != null && c.Name.StartsWith("Entry_")).ToList();
+            foreach (var c in controlsToRemove) this.Controls.Remove(c);
+
+            int index = 1;
+            foreach (var item in data)
+            {
+                var row = CreateRow(item, index++, 0);
+                this.Controls.Add(row);
+            }
+            ReLayoutAll();
+            this.ResumeLayout(true);
         }
 
         // =====================================================
@@ -40,30 +68,17 @@ namespace KostPakYoyok
         private async Task LoadRiwayatLamaAsync()
         {
             try {
-                this.SuspendLayout();
-                var controlsToRemove = this.Controls.Cast<Control>().Where(c => c.Name != null && c.Name.StartsWith("Entry_")).ToList();
-                foreach (var c in controlsToRemove) this.Controls.Remove(c);
-
                 using (var client = new HttpClient()) {
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
                     var resp = await client.GetAsync(ApiUrl);
                     if (!resp.IsSuccessStatusCode) return;
 
                     var arr = JArray.Parse(await resp.Content.ReadAsStringAsync());
-                    int index = 1;
-                    var lamaData = arr.Where(x => x["kategori"]?.ToString() == "lama").ToList();
-
-                    foreach (var item in lamaData) {
-                        var row = CreateRow(item, index++, 0);
-                        this.Controls.Add(row);
-                    }
+                    allData = arr.Where(x => x["kategori"]?.ToString() == "lama").ToList();
+                    RenderRows(allData);
                 }
             } catch (Exception ex) { 
                 MessageBox.Show("Kendala Sinkronisasi: " + ex.Message); 
-            }
-            finally { 
-                ReLayoutAll();
-                this.ResumeLayout(true);
             }
         }
 

@@ -68,7 +68,7 @@
             this.guna2ShadowPanel3.Controls.Add(this.guna2Button3);
             this.guna2ShadowPanel3.Controls.Add(this.label7);
             this.guna2ShadowPanel3.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel3.Location = new System.Drawing.Point(583, 59);
+            this.guna2ShadowPanel3.Location = new System.Drawing.Point(583, 100);
             this.guna2ShadowPanel3.Name = "guna2ShadowPanel3";
             this.guna2ShadowPanel3.Radius = 12;
             this.guna2ShadowPanel3.ShadowColor = System.Drawing.Color.Black;
@@ -189,7 +189,7 @@
             this.guna2ShadowPanel2.Controls.Add(this.label4);
             this.guna2ShadowPanel2.Controls.Add(this.label1);
             this.guna2ShadowPanel2.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel2.Location = new System.Drawing.Point(90, 198);
+            this.guna2ShadowPanel2.Location = new System.Drawing.Point(90, 239);
             this.guna2ShadowPanel2.Name = "guna2ShadowPanel2";
             this.guna2ShadowPanel2.Radius = 12;
             this.guna2ShadowPanel2.ShadowColor = System.Drawing.Color.Black;
@@ -346,7 +346,7 @@
             this.guna2ShadowPanel1.Controls.Add(this.label2);
             this.guna2ShadowPanel1.Controls.Add(this.guna2PictureBox2);
             this.guna2ShadowPanel1.FillColor = System.Drawing.Color.Red;
-            this.guna2ShadowPanel1.Location = new System.Drawing.Point(90, 59);
+            this.guna2ShadowPanel1.Location = new System.Drawing.Point(90, 100);
             this.guna2ShadowPanel1.Name = "guna2ShadowPanel1";
             this.guna2ShadowPanel1.Radius = 12;
             this.guna2ShadowPanel1.ShadowColor = System.Drawing.Color.Black;
@@ -393,7 +393,7 @@
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI Semibold", 16F, System.Drawing.FontStyle.Bold);
             this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(18)))), ((int)(((byte)(101)))));
-            this.label8.Location = new System.Drawing.Point(138, 11);
+            this.label8.Location = new System.Drawing.Point(138, 40);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(275, 37);
             this.label8.TabIndex = 18;

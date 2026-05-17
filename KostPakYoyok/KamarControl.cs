@@ -67,10 +67,10 @@ namespace KostPakYoyok
                     
                     JArray arr = (token["data"] != null) ? (JArray)token["data"] : (token.Type == JTokenType.Array ? (JArray)token : new JArray());
 
-                    int columns = 5, gapX = 20, gapY = 30, marginLeft = 24, marginTop = 65;
-                    int availableWidth = Math.Max(600, this.ClientSize.Width - marginLeft * 2);
-                    int cardWidth = Math.Max(180, (availableWidth - gapX * (columns - 1)) / columns);
-                    int cardHeight = 550;
+                    int columns = 5, gapX = 15, gapY = 30, marginLeft = 40, marginTop = 234;
+                    int availableWidth = Math.Max(1200, this.ClientSize.Width - marginLeft * 2);
+                    int cardWidth = Math.Max(220, (availableWidth - gapX * (columns - 1)) / columns);
+                    int cardHeight = 580;
 
                     for (int i = 0; i < arr.Count; i++)
                     {

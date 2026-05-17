@@ -72,9 +72,11 @@ namespace KostPakYoyok
                     client.DefaultRequestHeaders.Authorization =
                         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Session.Token);
 
+                    // Sinkronisasi Nama dan Username biar satu data mang!
                     var body = new JObject
                     {
-                        ["nama_profile"] = newName
+                        ["nama_profile"] = newName,
+                        ["username"] = newName 
                     };
 
                     if (!string.IsNullOrEmpty(newPassword))
@@ -121,16 +123,17 @@ namespace KostPakYoyok
                     {
                         var parsed = JObject.Parse(respJson);
 
-                        string updatedName =
+                        string updatedValue =
                             (string)parsed["data"]?["nama_profile"]
-                            ?? (string)parsed["data"]?["name"]
+                            ?? (string)parsed["data"]?["username"]
                             ?? (string)parsed["user"]?["nama_profile"]
-                            ?? (string)parsed["user"]?["name"]
+                            ?? (string)parsed["user"]?["username"]
                             ?? (string)parsed["nama"]
                             ?? (string)parsed["name"]
                             ?? newName;
 
-                        Session.Nama = updatedName;
+                        Session.Nama = updatedValue;
+                        Session.Username = updatedValue;
 
                         var mainForm = System.Windows.Forms.Application.OpenForms
                             .OfType<FormUtama>()
@@ -139,7 +142,7 @@ namespace KostPakYoyok
                         if (mainForm != null)
                             mainForm.SetUserName(Session.Nama);
 
-                        MessageBox.Show("Profil berhasil disimpan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Profil berhasil diperbarui.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                         this.Close();
                     }

@@ -1,4 +1,4 @@
-﻿namespace KostPakYoyok
+namespace KostPakYoyok
 {
     partial class FormProfil
     {

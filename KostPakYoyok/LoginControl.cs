@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,13 +38,26 @@ namespace KostPakYoyok
         // =====================================================
         private async void btnLogin_Click(object sender, EventArgs e)
         {
+            // Reset & Force Security Protocol
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            ServicePointManager.ServerCertificateValidationCallback = (s, cert, chain, ssl) => true;
+
             btnLogin.Enabled = false;
-            var prevCursor = Cursor.Current;
-            Cursor.Current = Cursors.WaitCursor;
+            var prevCursor = System.Windows.Forms.Cursor.Current;
+            System.Windows.Forms.Cursor.Current = Cursors.WaitCursor;
 
             try
             {
-                using (var client = new HttpClient())
+                // Gunakan handler biar lebih mantap tembus SSL-nya mang!
+                var handler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
+                    Proxy = null,
+                    UseProxy = false
+                };
+
+                using (var client = new HttpClient(handler))
                 {
                     var data = new
                     {
@@ -61,12 +75,10 @@ namespace KostPakYoyok
                     }
                     catch (HttpRequestException httpEx)
                     {
-                        MessageBox.Show("Network error: " + httpEx.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                    catch (TaskCanceledException tcEx)
-                    {
-                        MessageBox.Show("Request timed out: " + tcEx.Message, "Timeout", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        string detailedError = httpEx.Message;
+                        if (httpEx.InnerException != null) detailedError += "\nDetail: " + httpEx.InnerException.Message;
+                        
+                        MessageBox.Show("Kendala Jaringan:\n" + detailedError, "Network Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
@@ -74,21 +86,11 @@ namespace KostPakYoyok
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        MessageBox.Show($"Server returned {(int)response.StatusCode} {response.ReasonPhrase}\nResponse: {result}", "Server error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Server Error {(int)response.StatusCode}\nMsg: {result}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    JObject resObj;
-                    try
-                    {
-                        resObj = JObject.Parse(result);
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("Invalid JSON from server:\n" + result, "Parse error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
+                    JObject resObj = JObject.Parse(result);
                     var status = (string)resObj["status"] ?? (string)resObj["meta"]?["status"];
                     var message = (string)resObj["message"] ?? (string)resObj["meta"]?["message"] ?? "";
 
@@ -96,48 +98,36 @@ namespace KostPakYoyok
 
                     if (ok)
                     {
-                        string token = (string)resObj["token"]
-                            ?? (string)resObj["access_token"]
-                            ?? (string)resObj["data"]?["token"]
-                            ?? (string)resObj["data"]?["access_token"];
+                        string token = (string)resObj["token"] ?? (string)resObj["access_token"] ?? (string)resObj["data"]?["token"] ?? (string)resObj["data"]?["access_token"];
+                        if (!string.IsNullOrWhiteSpace(token)) Session.Token = token;
 
-                        if (!string.IsNullOrWhiteSpace(token))
-                        {
-                            Session.Token = token; 
-                        }
-
-                        string namaUser = (string)resObj["user"]?["nama_profile"]
-                            ?? (string)resObj["user"]?["name"]
-                            ?? (string)resObj["user"]?["nama"]
-                            ?? (string)resObj["data"]?["user"]?["nama_profile"]
-                            ?? (string)resObj["data"]?["user"]?["name"]
-                            ?? (string)resObj["name"]
-                            ?? (string)resObj["nama"]
-                            ?? textUsername.Text;
-
+                        string namaUser = (string)resObj["user"]?["nama_profile"] ?? (string)resObj["user"]?["name"] ?? (string)resObj["data"]?["user"]?["nama_profile"] ?? textUsername.Text;
+                        string userIdent = (string)resObj["user"]?["username"] ?? (string)resObj["data"]?["user"]?["username"] ?? textUsername.Text;
+                        
                         Session.Nama = namaUser;
+                        Session.Username = userIdent;
 
                         FormUtama dashboard = new FormUtama();
                         dashboard.StartPosition = FormStartPosition.CenterScreen;
                         dashboard.SetUserName(Session.Nama);
-
                         dashboard.Show();
-                        dashboard.BringToFront();
-                        dashboard.Activate();
 
-                        var parentForm = this.FindForm();
-                        parentForm?.Hide();
+                        this.FindForm()?.Hide();
                     }
                     else
                     {
-                        MessageBox.Show("Login gagal: " + (string.IsNullOrEmpty(message) ? result : message), "Login failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Gagal: " + (string.IsNullOrEmpty(message) ? result : message), "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi Kesalahan:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 btnLogin.Enabled = true;
-                Cursor.Current = prevCursor;
+                System.Windows.Forms.Cursor.Current = prevCursor;
             }
         }
     }

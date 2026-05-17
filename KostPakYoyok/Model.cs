@@ -13,6 +13,7 @@ namespace KostPakYoyok
     {
         public static string Token;
         public static string Nama;
+        public static string Username;
     }
 
     // =====================================================
