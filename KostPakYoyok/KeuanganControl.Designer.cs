@@ -60,7 +60,7 @@ namespace KostPakYoyok
             this.guna2ShadowPanel3.Controls.Add(this.panelIsiRiwayat);
             this.guna2ShadowPanel3.Controls.Add(this.label7);
             this.guna2ShadowPanel3.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel3.Location = new System.Drawing.Point(812, 120);
+            this.guna2ShadowPanel3.Location = new System.Drawing.Point(812, 170);
             this.guna2ShadowPanel3.Name = "guna2ShadowPanel3";
             this.guna2ShadowPanel3.Radius = 12;
             this.guna2ShadowPanel3.ShadowColor = System.Drawing.Color.Black;
@@ -137,7 +137,7 @@ namespace KostPakYoyok
             this.guna2ShadowPanel2.Controls.Add(this.textKeterangan);
             this.guna2ShadowPanel2.Controls.Add(this.label1);
             this.guna2ShadowPanel2.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel2.Location = new System.Drawing.Point(230, 381);
+            this.guna2ShadowPanel2.Location = new System.Drawing.Point(230, 431);
             this.guna2ShadowPanel2.Name = "guna2ShadowPanel2";
             this.guna2ShadowPanel2.Radius = 12;
             this.guna2ShadowPanel2.ShadowColor = System.Drawing.Color.Black;
@@ -232,7 +232,7 @@ namespace KostPakYoyok
             this.guna2ShadowPanel1.Controls.Add(this.labelTotal);
             this.guna2ShadowPanel1.Controls.Add(this.label12);
             this.guna2ShadowPanel1.FillColor = System.Drawing.Color.White;
-            this.guna2ShadowPanel1.Location = new System.Drawing.Point(230, 120);
+            this.guna2ShadowPanel1.Location = new System.Drawing.Point(230, 170);
             this.guna2ShadowPanel1.Name = "guna2ShadowPanel1";
             this.guna2ShadowPanel1.Radius = 12;
             this.guna2ShadowPanel1.ShadowColor = System.Drawing.Color.Black;

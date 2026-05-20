@@ -198,12 +198,9 @@ namespace KostPakYoyok
             return "https://kost.arcv.web.id/" + cleanPath;
         }
 
-        private Image TryGetImageFromResources(string p) => null;
-
         // =====================================================
         // EVENT HANDLERS
         // =====================================================
         private void btnTambah_Click(object sender, EventArgs e) => _ = OnTambahClickedAsync();
-        private void btnEditKamar_Click(object sender, EventArgs e) => _ = LoadKamarAsync();
     }
 }
